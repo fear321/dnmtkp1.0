@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YKS Takip - Ayarlar</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0d0b14;    /* Kozmik Mor */
+            --secondary: #2D1B36;  /* Panel arka planı */
+            --accent: #9B6B9E;     /* Vurgu rengi */
+            --light: #E5B8F4;      /* Açık metin rengi */
+            --border: #4A3B4E;     /* Kenarlık rengi */
+            --background: var(--primary); /* Arka plan rengi için değişken */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+    body {
+    background: url('purplestar.jpeg') no-repeat center center fixed;
+    background-size: cover;
+    color: var(--light);
+    display: flex;
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Hafif karartma efekti */
+    backdrop-filter: blur(10px); /* Flu (bulanık) efekt */
+    z-index: -1;
+}
+
+        /* Sol Menü Stilleri */
+        .settings-sidebar {
+            width: 70px;
+            font-size: 0.5rem;
+            padding: 2rem 0;
+            border-right: 1px solid var(--border);
+        }
+
+        .settings-menu {
+            list-style: none;
+        }
+
+        .settings-menu-item {
+            padding: 1rem 0; /* Dikey boşluk ekle */
+            cursor: pointer;
+            display: flex;
+            flex-direction: column; /* İkon ve yazıyı dikey hizala */
+            align-items: center; /* Ortala */
+            gap: 0.5rem; /* İkon ile yazı arasında boşluk */
+            color: var(--light);
+            transition: all 0.3s ease;
+        }
+
+        .settings-menu-item:hover {
+            background-color: rgba(58, 109, 240, 0.1);
+            color: var(--accent);
+        }
+
+        .settings-menu-item.active {
+            background-color: rgba(58, 109, 240, 0.1);
+            color: var(--accent);
+            border-left: 3px solid var(--accent);
+        }
+
+        .menu-icon {
+            font-size: 1.2rem;
+        }
+
+        /* Ana İçerik Alanı Stilleri */
+        .settings-content {
+            flex: 1;
+            padding: 2rem;
+        }
+
+        .settings-header {
+            margin-bottom: 2rem;
+            color: #fff;
+        }
+
+        .theme-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .theme-option {
+            background-color: var(--primary);
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative; /* Konumlandırma için */
+        }
+
+        .theme-option:hover {
+            border-color: var(--accent);
+            background-color: rgba(var(--accent-rgb), 0.1);
+            transform: translateY(-2px);
+        }
+
+        .theme-option.active {
+            border-color: var(--accent);
+            background-color: rgba(var(--accent-rgb), 0.2);
+        }
+
+        .theme-preview {
+            height: 100px;
+            border-radius: 6px;
+            margin-bottom: 0.8rem;
+        }
+
+        .theme-name {
+            color: #fff;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .theme-menu {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer; /* Tıklanabilir hale getirmek için */
+        }
+
+        .theme-dropdown {
+            display: none;
+            position: absolute;
+            top: -80px; /* Menüyü yukarıda göster */
+            right: 10px;
+            background-color: var(--secondary);
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 100;
+            min-width: 150px;
+        }
+
+        .theme-dropdown button {
+            background: none;
+            border: none;
+            color: var(--light);
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            text-align: left;
+            width: 100%;
+        }
+
+        .theme-dropdown button:hover {
+            background-color: rgba(58, 109, 240, 0.1);
+        }
+
+        /* Geri Dönüş Butonu */
+        .back-button {
+            width: 100%;
+            padding: 0.5rem;
+            background-color: transparent;
+            color: var(--light);
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .back-button:hover {
+            color: var(--accent);
+        }
+
+        /* Yeni tema ekleme kartı */
+        .add-theme-option {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--accent);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .add-theme-option:hover {
+            transform: scale(1.05);
+        }
+
+        /* Tema düzenleme modalı */
+        .theme-edit-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+        }
+
+        .theme-edit-content {
+            background: var(--secondary);
+            padding: 2rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .color-input-group {
+            margin: 1rem 0;
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .color-preview {
+            width: 100%;
+            height: 40px;
+            border-radius: 6px;
+            margin-top: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            /* Yeni mobil navigasyon */
+
+        }
+    </style>
+    <script src="themes.js"></script>
+
+</head>
+<body>
+    <!-- Sol Menü -->
+    <div class="settings-sidebar">
+        <button class="back-button" onclick="window.location.href='home.html'">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+        <ul class="settings-menu">
+            <li class="settings-menu-item active">
+                <i class="fas fa-palette menu-icon"></i>
+                <span>Tema</span>
+            </li>
+            <li class="settings-menu-item">
+                <i class="fas fa-clock menu-icon"></i>
+                <span>Saat</span>
+            </li>
+            <li class="settings-menu-item">
+                <i class="fas fa-user-gear menu-icon"></i>
+                <span>Hesap</span>
+            </li>
+            <li class="settings-menu-item">
+                <i class="fas fa-bell menu-icon"></i>
+                <span>Bildirimler</span>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Ana İçerik -->
+    <div class="settings-content">
+        <div class="settings-header">
+            <h1>Tema Ayarları</h1>
+        </div>
+
+        <div class="theme-selection">
+            <h2>Tema Seçimi</h2>
+            <div class="theme-grid">
+                <div class="theme-option" data-theme="cosmic-purple">
+                    <div class="theme-preview" style="background: linear-gradient(to right, #1a1423, #2D1B36)"></div>
+                    <div class="theme-name">Kozmik Mor</div>
+                    <div class="theme-menu" onclick="toggleMenu(event)">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </div>
+                    <div class="theme-dropdown">
+                        <button onclick="editTheme('cosmic-purple')">Düzenle</button>
+                        <button onclick="deleteTheme('cosmic-purple')">Sil</button>
+                    </div>
+                </div>
+                <div class="theme-option" data-theme="exam-tracker">
+                    <div class="theme-preview" style="background: linear-gradient(to right, #765D67, #6D3C52)"></div>
+                    <div class="theme-name">Açık Pembe</div>
+                    <div class="theme-menu" onclick="toggleMenu(event)">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </div>
+                    <div class="theme-dropdown">
+                        <button onclick="editTheme('exam-tracker')">Düzenle</button>
+                        <button onclick="deleteTheme('exam-tracker')">Sil</button>
+                    </div>
+                </div>
+                <div class="theme-option" data-theme="metalic-gold-pink">
+                    <div class="theme-preview" style="background: linear-gradient(to right, #c5b96a, #6D3C52)"></div>
+                    <div class="theme-name">Metalik Altın - Pembe</div>
+                    <div class="theme-menu" onclick="toggleMenu(event)">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </div>
+                    <div class="theme-dropdown">
+                        <button onclick="editTheme('metalic-gold-pink')">Düzenle</button>
+                        <button onclick="deleteTheme('metalic-gold-pink')">Sil</button>
+                    </div>
+                </div>
+                <div class="theme-option" data-theme="ocean">
+                    <div class="theme-preview" style="background: linear-gradient(to right, #2c3e50, #3498db)"></div>
+                    <div class="theme-name">Okyanus</div>
+                    <div class="theme-menu" onclick="toggleMenu(event)">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </div>
+                    <div class="theme-dropdown">
+                        <button onclick="editTheme('ocean')">Düzenle</button>
+                        <button onclick="deleteTheme('ocean')">Sil</button>
+                    </div>
+                </div>
+                <div class="theme-option" data-theme="night-mode">
+                    <div class="theme-preview" style="background: linear-gradient(to right, #232526, #414345)"></div>
+                    <div class="theme-name">Gece Modu</div>
+                    <div class="theme-menu" onclick="toggleMenu(event)">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </div>
+                    <div class="theme-dropdown">
+                        <button onclick="editTheme('night-mode')">Düzenle</button>
+                        <button onclick="deleteTheme('night-mode')">Sil</button>
+                    </div>
+                </div>
+                <div class="theme-option" data-theme="nebula">
+                    <div class="theme-preview" style="background: linear-gradient(45deg, #2D1B36, #B86AF9)"></div>
+                    <div class="theme-name">Nebula</div>
+                    <div class="theme-menu" onclick="toggleMenu(event)">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </div>
+                    <div class="theme-dropdown">
+                        <button onclick="editTheme('nebula')">Düzenle</button>
+                        <button onclick="deleteTheme('nebula')">Sil</button>
+                    </div>
+                </div>
+                <div class="theme-option" data-theme="starlight">
+                    <div class="theme-preview" style="background: linear-gradient(to right, #1E1E2E, #A387CC)"></div>
+                    <div class="theme-name">Yıldız Işığı</div>
+                    <div class="theme-menu" onclick="toggleMenu(event)">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </div>
+                    <div class="theme-dropdown">
+                        <button onclick="editTheme('starlight')">Düzenle</button>
+                        <button onclick="deleteTheme('starlight')">Sil</button>
+                    </div>
+                </div>
+                <div class="theme-option add-theme-option" onclick="openNewThemeModal()">
+                    <i class="fas fa-plus-circle"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tema düzenleme/ekleme modalı -->
+    <div id="themeEditModal" class="theme-edit-modal">
+        <div class="theme-edit-content">
+            <h2 id="modalTitle">Tema Düzenle</h2>
+            <form id="themeEditForm">
+                <div class="input-group">
+                    <label>Tema Adı</label>
+                    <input type="text" id="themeName" required>
+                </div>
+                
+                <div class="color-input-group">
+                    <label>Ana Renk</label>
+                    <div>
+                        <input type="color" id="primaryColor">
+                        <div class="color-preview" id="primaryPreview"></div>
+                    </div>
+                </div>
+                
+                <div class="color-input-group">
+                    <label>İkincil Renk</label>
+                    <div>
+                        <input type="color" id="secondaryColor">
+                        <div class="color-preview" id="secondaryPreview"></div>
+                    </div>
+                </div>
+                
+                <div class="color-input-group">
+                    <label>Vurgu Rengi</label>
+                    <div>
+                        <input type="color" id="accentColor">
+                        <div class="color-preview" id="accentPreview"></div>
+                    </div>
+                </div>
+                
+                <div class="color-input-group">
+                    <label>Metin Rengi</label>
+                    <div>
+                        <input type="color" id="lightColor">
+                        <div class="color-preview" id="lightPreview"></div>
+                    </div>
+                </div>
+                
+                <div class="form-buttons">
+                    <button type="submit" class="content-button">Kaydet</button>
+                    <button type="button" class="content-button" onclick="closeThemeModal()">İptal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+    // LocalStorage'dan temaları yükle veya varsayılan temaları kullan
+    let customThemes = JSON.parse(localStorage.getItem('customThemes')) || {
+        'cosmic-purple': {
+            primary: '#1a1423',
+            secondary: '#2D1B36',
+            accent: '#9B6B9E',
+            light: '#E5B8F4',
+            border: '#4A3B4E',
+            background: '#0d0b14',
+            gradient: 'linear-gradient(to right, #1a1423, #2D1B36)'
+        },
+        'exam-tracker': {
+            primary: '#200107',
+            secondary: '#6D3C52',
+            accent: '#4B2138',
+            light: '#FADCD5',
+            border: '#2D222F',
+            background: '#200107',
+            gradient: 'linear-gradient(to right, #200107, #6D3C52)'
+        }
+    };
+
+    // themes.js'deki temaları customThemes ile birleştir
+    Object.assign(themes, customThemes);
+
+    // Tema menüsünü aç/kapa
+    function toggleMenu(event) {
+        event.stopPropagation();
+        const clickedMenu = event.target.closest('.theme-menu');
+        const allDropdowns = document.querySelectorAll('.theme-dropdown');
+        
+        // Diğer tüm açık menüleri kapat
+        allDropdowns.forEach(dropdown => {
+            if (dropdown !== clickedMenu.nextElementSibling) {
+                dropdown.style.display = 'none';
+            }
+        });
+        
+        // Tıklanan menüyü aç/kapa
+        const dropdown = clickedMenu.nextElementSibling;
+        dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+    }
+
+    // Tema düzenleme modalını aç
+    function editTheme(themeName) {
+        event.stopPropagation();
+        const theme = themes[themeName];
+        document.getElementById('modalTitle').textContent = 'Tema Düzenle';
+        document.getElementById('themeName').value = themeName;
+        document.getElementById('primaryColor').value = theme.primary;
+        document.getElementById('secondaryColor').value = theme.secondary;
+        document.getElementById('accentColor').value = theme.accent;
+        document.getElementById('lightColor').value = theme.light;
+        
+        updateColorPreviews();
+        document.getElementById('themeEditModal').style.display = 'block';
+    }
+
+    // Yeni tema ekleme modalını aç
+    function openNewThemeModal() {
+        document.getElementById('modalTitle').textContent = 'Yeni Tema Ekle';
+        document.getElementById('themeEditForm').reset();
+        updateColorPreviews();
+        document.getElementById('themeEditModal').style.display = 'block';
+    }
+
+    // Tema modalını kapat
+    function closeThemeModal() {
+        document.getElementById('themeEditModal').style.display = 'none';
+    }
+
+    // Renk önizlemelerini güncelle
+    function updateColorPreviews() {
+        document.getElementById('primaryPreview').style.backgroundColor = document.getElementById('primaryColor').value;
+        document.getElementById('secondaryPreview').style.backgroundColor = document.getElementById('secondaryColor').value;
+        document.getElementById('accentPreview').style.backgroundColor = document.getElementById('accentColor').value;
+        document.getElementById('lightPreview').style.backgroundColor = document.getElementById('lightColor').value;
+    }
+
+    // Tema silme işlemi
+    function deleteTheme(themeName) {
+        event.stopPropagation();
+        if (themeName === 'cosmic-purple') {
+            alert('Varsayılan tema silinemez!');
+            return;
+        }
+        
+        if (confirm(`"${themeName}" temasını silmek istediğinize emin misiniz?`)) {
+            delete themes[themeName];
+            delete customThemes[themeName];
+            
+            // LocalStorage'ı güncelle
+            localStorage.setItem('customThemes', JSON.stringify(customThemes));
+            
+            // Tema listesini güncelle
+            updateThemeGrid();
+            
+            // Eğer aktif tema silindiyse varsayılan temaya geç
+            if (localStorage.getItem('selectedTheme') === themeName) {
+                themeManager.changeTheme('cosmic-purple');
+            }
+        }
+    }
+
+    // Form gönderimi
+    document.getElementById('themeEditForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const themeName = document.getElementById('themeName').value;
+        const primaryColor = document.getElementById('primaryColor').value;
+        const secondaryColor = document.getElementById('secondaryColor').value;
+        const accentColor = document.getElementById('accentColor').value;
+        const lightColor = document.getElementById('lightColor').value;
+
+        const newTheme = {
+            primary: primaryColor,
+            secondary: secondaryColor,
+            accent: accentColor,
+            light: lightColor,
+            border: secondaryColor,
+            background: primaryColor,
+            gradient: `linear-gradient(to right, ${primaryColor}, ${secondaryColor})`
+        };
+        
+        // Temayı her iki objede de güncelle
+        themes[themeName] = newTheme;
+        customThemes[themeName] = newTheme;
+        
+        // LocalStorage'a kaydet
+        localStorage.setItem('customThemes', JSON.stringify(customThemes));
+        
+        // Arayüzü güncelle
+        updateThemeGrid();
+        closeThemeModal();
+        
+        // Yeni temayı uygula
+        themeManager.changeTheme(themeName);
+    });
+
+    // Tema seçimi için event listener
+    function selectTheme(themeName) {
+        themeManager.changeTheme(themeName);
+    }
+
+    // Tema grid'ini güncelle
+    function updateThemeGrid() {
+        const grid = document.querySelector('.theme-grid');
+        grid.innerHTML = '';
+        
+        // Mevcut temaları ekle
+        Object.entries(themes).forEach(([name, theme]) => {
+            grid.innerHTML += `
+                <div class="theme-option" data-theme="${name}" onclick="selectTheme('${name}')">
+                    <div class="theme-preview" style="background: ${theme.gradient}"></div>
+                    <div class="theme-name">${name}</div>
+                    <div class="theme-menu" onclick="toggleMenu(event)">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </div>
+                    <div class="theme-dropdown">
+                        <button onclick="editTheme('${name}')">Düzenle</button>
+                        <button onclick="deleteTheme('${name}')">Sil</button>
+                    </div>
+                </div>
+            `;
+        });
+        
+        // Yeni tema ekleme kartını ekle
+        grid.innerHTML += `
+            <div class="theme-option add-theme-option" onclick="openNewThemeModal()">
+                <i class="fas fa-plus-circle"></i>
+            </div>
+        `;
+    }
+
+    // Menü dışına tıklandığında menüleri kapat
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.theme-menu') && !e.target.closest('.theme-dropdown')) {
+            document.querySelectorAll('.theme-dropdown').forEach(dropdown => {
+                dropdown.style.display = 'none';
+            });
+        }
+    });
+
+    // Sayfa yüklendiğinde
+    document.addEventListener('DOMContentLoaded', () => {
+        // Tema grid'ini güncelle
+        updateThemeGrid();
+        
+        // Mevcut temayı uygula
+        const currentTheme = localStorage.getItem('selectedTheme') || 'cosmic-purple';
+        themeManager.changeTheme(currentTheme);
+    });
+    </script>
+</body>
+</html>
