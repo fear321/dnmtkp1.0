@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YKS Takip - Ana Sayfa</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0d0b14;    /* Koyu ton */
+            --secondary: #252736;  /* Koyu ton */
+            --accent: #3a6df0;     /* Vurgu rengi */
+            --light: #E5B8F4;      /* Açık metin rengi */
+            --border: #252736;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: url('../Res/purplestar.jpeg') no-repeat center center fixed;
+            background-size: cover;
+            color: var(--light);
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5); /* Hafif karartma efekti */
+            backdrop-filter: blur(10px); /* Flu (bulanık) efekt */
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .dashboard-card {
+            background: rgba(37, 39, 54, 0.5); /* Koyu ton, şeffaflık artırıldı */
+            border-radius: 14px;
+            padding: 1rem; /* Padding değerini düşürdük */
+            transition: all 0.3s ease;
+            cursor: pointer;
+            min-height: 150px; /* Yüksekliği düşürdük */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border: 1px solid var(--border);
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+            box-shadow: 0 8px 16px rgba(58, 109, 240, 0.1);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-icon {
+            font-size: 1.5rem;
+            color: var(--accent);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .card-content {
+            color: var(--light);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .card-footer {
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-footer:hover {
+            gap: 0.75rem;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <script src="themes.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentTheme = themeManager.getCurrentTheme();
+            themeManager.applyTheme(currentTheme);
+        });
+    </script>
+</head>
+<body class="with-background-image">
+    <div class="container">
+        <div class="dashboard-grid">
+            <!-- Deneme Analizi Kartı -->
+            <div class="dashboard-card" onclick="window.location.href='index.html'">
+                <div>
+                    <div class="card-header">
+                        <i class="fas fa-chart-line card-icon"></i>
+                        <h2 class="card-title">Deneme Analizi</h2>
+                    </div>
+                    <p class="card-content">
+                        Deneme sınavı performansınızı analiz edin, gelişiminizi takip edin ve başarı grafiğinizi görüntüleyin.
+                    </p>
+                </div>
+                <div class="card-footer">
+                    Detaylı analiz için tıklayın →
+                </div>
+            </div>
+
+
+            <!-- Zamanlayıcı Kartı -->
+            <div class="dashboard-card" onclick="window.location.href='clock.html'">
+                <div>
+                    <div class="card-header">
+                        <i class="fas fa-clock card-icon"></i>
+                        <h2 class="card-title">Zamanlayıcı</h2>
+                    </div>
+                    <p class="card-content">
+                        Pomodoro tekniği ile çalışma sürenizi yönetin
+                    </p>
+                </div>
+                <div class="card-footer">
+                    Zamanlayıcıyı başlat →
+                </div>
+            </div>
+
+            <!-- Ayarlar Kartı -->
+            <div class="dashboard-card" onclick="window.location.href='settings.html'">
+                <div>
+                    <div class="card-header">
+                        <i class="fas fa-gear card-icon"></i>
+                        <h2 class="card-title">Ayarlar</h2>
+                    </div>
+                    <p class="card-content">
+                        Uygulama ayarlarını özelleştirin, tema seçin ve tercihlerinizi düzenleyin.
+                    </p>
+                </div>
+                <div class="card-footer">
+                    Ayarları düzenle →
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

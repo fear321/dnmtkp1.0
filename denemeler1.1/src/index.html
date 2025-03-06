@@ -1,0 +1,1979 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YKS Takip Sistemi</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Quicksand', sans-serif;
+        }
+        :root {
+            /* Tema değişkenlerini dinamik olarak güncellenecek şekilde ayarla */
+            --primary: #1a1d2b;
+            --secondary: #252736;
+            --accent: #3a6df0;
+            --light: #E5B8F4;
+            --border: #4A3B4E;
+            --dark: #2D222F;
+            --highlight: #7C81AD;
+            --sectionBackground: #2c2c2c;
+            --background: #0d0b14;
+        }
+
+body {
+    background: url('../Res/purplestar.jpeg') no-repeat center center fixed;
+    background-size: cover;
+    color: var(--light);
+    min-height: 100vh; /* Minimum viewport yüksekliği */
+    overflow-y: auto; /* Dikey kaydırma ekle */
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3); /* Yarı saydam blurlu arkaplan */
+    backdrop-filter: blur(10px); /* Flu (bulanık) efekt */
+    z-index: -1;
+}
+
+
+        .header {
+            background: url('../Res/Zerallys.jpeg');
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            width: 100%;
+            height: 100px;
+            justify-content: space-between;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            opacity: 0.6;
+
+        }
+        header::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Hafif karartma efekti */
+    backdrop-filter: blur(2px); /* Flu (bulanık) efekt */
+    z-index: -1;
+}
+
+        .back-button {
+            background-color: var(--accent);
+            color: var(--light);
+            border: none;
+            border-radius: 4px;
+            padding: 0.5rem;
+            cursor: pointer;
+            font-size: 1.2rem;
+            height: 70px;
+            width: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .welcome-countdown-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            margin-left: 1rem;
+            flex-grow: 1;
+        }
+
+        .welcome-text, .countdown {
+            text-align: left;
+            margin: 0;
+        }
+        .welcome-text {
+            font-size: 1.4rem;
+        } 
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-left: auto;
+            width: 100px;
+        }
+
+        .nav-menu button {
+            background-color: var(--secondary);
+            color: var(--light);
+            border: none;
+            padding: 0.1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.7rem;
+            width: 100%;
+            opacity: 0.8;
+        }
+
+        .nav-menu button.selected {
+            background-color: var(--accent);
+            opacity: 1;
+            transform: scale(1);
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .nav-menu button:hover {
+            background-color: var(--accent);
+        }
+
+        .main-content {
+            padding: 2rem;
+            padding-bottom: 100px; /* Nav barın yüksekliğine göre alt padding ekle */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            overflow-y: auto; /* Dikey kaydırma ekle */
+            max-height: calc(100vh - 100px); /* Header yüksekliğini çıkar */
+            margin-bottom: 80px; /* Bottom nav için alan bırak */
+        }
+
+        .top-section {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+
+        .stats-boxes {
+            display: flex;
+            gap: 1rem;
+            opacity: 0.6;
+        }
+
+        .stat-box {
+            background-color: var(--accent);
+            color: var(--light);
+            padding: 1rem;
+            border-radius: 8px;
+            width: 10rem;
+            height: 80px;
+            position: relative;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .stat-box:last-child {
+            width: 300px; /* Varsayılan genişlik */
+            height: auto;
+            padding: 0.8rem;
+            font-size: 0.9rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: default;
+            background: linear-gradient(45deg, var(--accent), var(--highlight));
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 80px;
+        }
+
+        .stat-box:last-child h3 {
+            position: static;
+            margin-bottom: 0.3rem; /* Üst boşluğu azalt */
+            font-size: 1rem;
+            color: var(--light);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-box:last-child p {
+            position: static;
+            font-size: 0.95rem;
+            text-align: center;
+            width: 100%;
+            line-height: 1.4;
+            color: var(--light);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            margin: 0; /* Margin'i sıfırla */
+        }
+
+        .add-exam-container {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .add-exam-btn {
+            background-color: var(--accent);
+            color: var(--light);
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .add-exam-btn:hover {
+            background-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .content-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Her iki panelin eşit genişlikte olmasını sağla */
+            gap: 2rem; /* Paneller arasındaki boşluk */
+        }
+
+        .right-panel {
+            background-color: var(--secondary);
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            opacity: 0.6;
+            margin-right: 2rem; /* Sağdan boşluk eklendi */
+        }
+
+        .graph-section {
+            height: 350px;
+            width: 100%;
+            padding: 1rem;
+            background-color: var(--secondary);
+            border-radius: 12px;
+            color: var(--dark);
+            position: relative;
+            z-index: 1;
+            opacity: 0.6;
+
+        }
+
+        canvas#performanceChart {
+            position: relative;
+            z-index: 2;
+            pointer-events: all;
+        }
+
+        .exam-list {
+            margin-top: 1rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .exam-list table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .exam-list th, .exam-list td {
+            padding: 0.5rem;
+            text-align: left;
+            border-bottom: 1px solid var(--light);
+            border-radius: 8px;
+        }
+
+        .exam-list th {
+            font-weight: bold;
+            color: var(--light);
+        }
+
+        .exam-list td {
+            color: var(--light);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: var(--primary);
+            padding: 1rem;
+            border-radius: 12px;
+            width: 70%;
+            max-width: 600px;
+            max-height: 80%;
+            overflow-y: auto;
+            color: var(--light);
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .input-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .input-row input {
+            flex: 1;
+            padding: 0.5rem;
+            border-radius: 4px;
+            border: 1px solid var(--accent);
+            background-color: var(--dark);
+            color: var(--light);
+            font-size: 1rem;
+        }
+
+        .subject-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .subject-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .subject-row label {
+            min-width: 120px;
+        }
+
+        .score-table {
+            display: flex;
+            gap: 1rem;
+            width: 160px;
+        }
+
+        .score-table input {
+            padding: 0.5rem;
+            border-radius: 4px;
+            border: 1px solid var(--accent);
+            background-color: var(--dark);
+            color: var(--light);
+            width: 70px;
+            height: 40px;
+            -webkit-appearance: none;
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+
+        .score-table input[type=number]::-webkit-inner-spin-button,
+        .score-table input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .exam-header {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .exam-header input {
+            padding: 0.5rem;
+            border-radius: 4px;
+            border: 1px solid var(--accent);
+            background-color: var(--dark);
+            color: var(--light);
+        }
+
+        .exam-header input[type="text"] {
+            flex: 2;
+        }
+
+        .exam-header input[type="date"] {
+            flex: 1;
+        }
+
+        .exam-table {
+            margin: 0.5rem 0;
+            max-height: none;
+        }
+
+        .exam-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .exam-table th, .exam-table td {
+            padding: 0.4rem;
+            text-align: left;
+            border-bottom: 1px solid var(--accent);
+        }
+
+        .exam-table .subject-title {
+            background-color: var(--accent);
+            color: var(--light);
+            font-weight: bold;
+            padding: 0.3rem 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .exam-table input[type="number"] {
+            width: 60px;
+            padding: 0.3rem;
+            border-radius: 4px;
+            border: 1px solid var(--accent);
+            background-color: var(--dark);
+            color: var(--light);
+            text-align: center;
+            -moz-appearance: textfield;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .exam-table input[type=number]::-webkit-inner-spin-button,
+        .exam-table input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+            margin-top: 0.5rem;
+        }
+
+        .form-buttons button {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .form-buttons button[type="submit"] {
+            background-color: var(--accent);
+            color: var(--light);
+        }
+
+        .form-buttons button[type="button"] {
+            background-color: var(--dark);
+            color: var(--light);
+        }
+
+        .no-spinner {
+            -moz-appearance: textfield !important;
+            -webkit-appearance: none !important;
+            appearance: none !important;
+            margin: 0 !important;
+        }
+
+        .no-spinner::-webkit-inner-spin-button, 
+        .no-spinner::-webkit-outer-spin-button { 
+            -webkit-appearance: none !important;
+            appearance: none !important;
+            margin: 0 !important;
+            display: none !important;
+        }
+
+        /* Number inputlardaki artırma/azaltma butonlarını kaldır */
+        input[type=number]::-webkit-outer-spin-button,
+        input[type=number]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        
+        input[type=number] {
+            -moz-appearance: textfield; /* Firefox için */
+            appearance: none; /* Diğer tarayıcılar için */
+        }
+
+        /* Kaydet ve İptal butonlarına stil ekle */
+        .content-button {
+            background-color: var(--accent); /* Temaya uygun arka plan rengi */
+            color: var(--light); /* Temaya uygun yazı rengi */
+            border: none; /* Kenar çizgisi yok */
+            padding: 10px 20px; /* İç boşluk */
+            border-radius: 5px; /* Kenar yuvarlama */
+            cursor: pointer; /* İmleç değişimi */
+            transition: background-color 0.3s; /* Geçiş efekti */
+        }
+
+        .content-button:hover {
+            background-color: var(--primary); /* Temaya uygun hover rengi */
+        }
+
+        .content-button:disabled {
+            background-color: #ccc; /* Devre dışı bırakıldığında arka plan rengi */
+            cursor: not-allowed; /* İmleç değişimi */
+        }
+
+        .back-button {
+            margin-right: 1rem;
+            background-color: var(--accent);
+            color: var(--light);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            padding: 2rem 0.1rem;
+            font-size: 1.5rem;
+            transition: background-color 0.3s;
+            margin-left: auto; /* Butonu en sağa itmek için */
+        }
+
+        .back-button:hover {
+            background-color: var(--secondary);
+        }
+
+        .theme-option:hover {
+            border-color: var(--accent);
+            background-color: rgba(var(--accent-rgb), 0.1);
+            transform: translateY(-2px);
+        }
+
+        .theme-option.active {
+            border-color: var(--accent);
+            background-color: rgba(var(--accent-rgb), 0.2);
+        }
+        .stats-boxes p{
+            text-align: right;
+        }
+        /* Buraya 900px altındaki ekranlar için CSS kodlarını yaz */
+        @media (max-width: 900px) {
+            *{
+                font-size: 0.75rem;
+            }
+            .graph-section {
+                    width: 100%; /* Grafik bölümünün genişliğini %100 yap */
+                    height: 300px; /* Grafik yüksekliğini ayarla */
+                }
+
+                .right-panel {
+                    width: 100%; /* Sağ panelin genişliğini %100 yap */
+                }
+
+
+
+            @media (max-width: 600px) {
+                .welcome-text{
+                    font-size: 1.3rem;
+                }
+                .countdown, #countdown-timer{
+                    font-size: 0.8rem;
+                }
+                .graph-section {
+                    width: 100%; /* Grafik bölümünün genişliğini %100 yap */
+                    height: 200px; /* Grafik yüksekliğini ayarla */
+                    order: 1; /* Grafik bölümünü üstte yerleştir */
+                }
+
+                .right-panel {
+                    width: 100%; /* Sağ panelin genişliğini %100 yap */
+                    order: 2; /* Sağ paneli altta yerleştir */
+                }
+
+                .content-section {
+                    display: flex;
+                    flex-direction: column; /* Dikey hizalama */
+                }
+
+                .stats-boxes {
+                    width: 100%;
+                    gap: 0.5rem;
+                    display: flex;
+                    flex-wrap: wrap;
+                }
+
+                .stat-box {
+                    width: calc((100% - 1rem) / 3); /* Gap'leri hesaba katarak genişliği ayarla */
+                    height: 75px;
+                    margin: 0;
+                }
+
+                .stat-box:last-child { /* Beta kutusu */
+                    width: 100%;
+                    margin-top: 0.5rem;
+                    height: 50px;
+                    order: 2;
+                }
+                
+                .stat-box:not(:last-child) { /* İlk üç kutu için */
+                    order: 1;
+                    width: calc((100% - 1rem) / 3); /* Gap'leri hesaba katarak genişliği ayarla */
+                }
+                
+                .stat-box h3 {
+                    font-size: 1rem;
+                }
+                
+                .stat-box p {
+                    font-size: 1.5rem;
+                }
+            }
+        }
+
+        /* Gölgelendirme ekle */
+        .header, .main-content, .modal-content, .stat-box, .right-panel, .graph-section {
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Gölgelendirme */
+        }
+
+        .page-transition-circle-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        .page-transition-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--accent);
+            transform: translate(-50%, -50%) scale(0);
+            transition: opacity var(--animation-duration-opacity) ease-in-out;
+            animation: circle-expand var(--animation-duration-circle) ease-out forwards;
+        }
+
+        @keyframes circle-expand {
+            to {
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        /* Metalic Gold Pink teması için yazı rengi */
+        body.metalic-gold-pink {
+            color: #fbffae; /* Yeni yazı rengi */
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 20px; /* Yüksekliği azaltmak için padding'i düşürdük */
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        .nav-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: none;
+            border: none;
+            color: var(--light);
+            opacity: 0.7;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            padding: 10px; /* Dikey ve yatay iç boşluk */
+            flex: 1; /* Eşit genişlik */
+            text-align: center; /* Metni ortala */
+        }
+
+        .nav-button i {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .nav-button span {
+            font-size: 0.8rem;
+        }
+
+        .nav-button.active {
+            opacity: 1; /* Aktif butonun görünürlüğünü artır */
+            color: var(--accent); /* Aktif buton rengi */
+        }
+
+        .nav-button:hover {
+            opacity: 1; /* Hover durumunda görünürlüğü artır */
+            transform: translateY(-2px); /* Hover durumunda yukarı hareket */
+        }
+
+        /* Ekran boyutu 600px'den küçükse nav butonunu göster */
+        @media (max-width: 600px) {
+            .bottom-nav {
+                display: flex; /* Göster */
+            }
+        }
+
+        /* Ekran boyutu 600px ve üzerindeyse nav butonunu gizle */
+        @media (min-width: 601px) {
+            .bottom-nav {
+                display: none; /* Gizle */
+            }
+        }
+
+        /* Mobil görünüm için özel stil */
+        @media (max-width: 600px) {
+            .stat-box.expanded {
+                width: 100% !important;
+                margin-bottom: 0; /* Alt margin'i kaldır */
+            }
+        }
+
+        /* Mobil görünümde beta kutusunun her zaman altta kalmasını sağla */
+        @media (max-width: 600px) {
+            .stat-box:last-child {
+                order: 1; /* En alta yerleştir */
+                width: 100%;
+                margin-top: 0.5rem;
+                height: 50px;
+            }
+        }
+
+        @keyframes notification-pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            }
+            50% {
+                transform: scale(1.02);
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            }
+        }
+
+        .stat-box:last-child:not(:hover) {
+            animation: none; /* Animasyonu kaldır */
+        }
+
+        /* Metin animasyonu için yeni keyframes */
+        @keyframes fadeInOut {
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+                font-size: 0.9rem;
+            }
+            50% {
+                opacity: 1;
+                transform: translateY(0);
+                font-size: 1.1rem;
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+                font-size: 1rem;
+            }
+        }
+
+        #beta {
+            margin: 0;
+            flex-grow: 1;
+            text-align: center;
+            animation: fadeInOut 0.5s ease-out;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        .beta-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--accent);
+            display: block;
+        }
+
+        .beta-icon i {
+            font-size: 1.5rem;
+            color: var(--light);
+            opacity: 0.7;
+            margin-top: 5px; /* İkon ile başlık arasına mesafe ekler */
+        }
+
+        /* Tüm çözünürlükler için temel stil */
+        .stat-box {
+            position: relative; /* İçerideki elemanların pozisyonlaması için */
+        }
+
+        .stat-box h3 {
+            font-size: 0.9rem;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            margin: 0;
+        }
+
+        .stat-box p {
+            font-size: 1.2rem;
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            margin: 0;
+        }
+
+        /* Beta kutusu için özel stil */
+        .stat-box:last-child h3,
+        .stat-box:last-child p {
+            position: static; /* Beta kutusunda absolute pozisyonlamayı kaldır */
+        }
+
+        /* Responsive boyutlar */
+        @media (min-width: 1201px) {
+            .stat-box h3 { font-size: 1rem; }
+            .stat-box p { font-size: 1.4rem; }
+        }
+
+        @media (max-width: 1200px) {
+            .stat-box h3 { font-size: 0.9rem; }
+            .stat-box p { font-size: 1.3rem; }
+        }
+
+        @media (max-width: 850px) {
+            .stat-box h3 { font-size: 0.85rem; }
+            .stat-box p { font-size: 1.2rem; }
+        }
+
+        @media (max-width: 600px) {
+            .stat-box h3 { font-size: 0.8rem; }
+            .stat-box p { font-size: 1.1rem; }
+        }
+
+        @media (min-width: 1301px) {
+            .stats-boxes {
+                display: flex;
+                justify-content: space-between;
+                width: 100%;
+            }
+
+            /* İlk üç kutu için */
+            .stat-box {
+                margin-right: 0.5rem;
+            }
+
+            /* Beta kutusu */
+            .stat-box:last-child {
+                margin-left: auto;
+                width: 30%;
+            }
+        }
+
+        @media (max-width: 1300px) and (min-width: 601px) {
+            .stats-boxes {
+                width: 100%;
+                gap: 0.5rem;
+                display: flex;
+                flex-wrap: nowrap;
+                gap: 2rem;
+            }
+
+            .stat-box {
+                width: calc(16.66% - 0.5rem);
+            }
+
+            .stat-box:last-child {
+                width: 50%;
+                margin-left: auto;
+            }
+
+            .stat-box:not(:last-child) {
+                width: calc(16.66% - 0.5rem);
+            }
+        }
+    </style>
+    <!-- Tema yönetimi için script dosyasını ekle -->
+    <script src="themes.js"></script>
+</head>
+<body class="with-background-image">
+    <header class="header">
+        <button class="back-button" onclick="window.location.href='home.html'"><i class="fa-solid fa-person-running"></i></button>
+        <div class="welcome-countdown-container">
+            <div class="welcome-text">Hoşgeldiniz</div>
+            <div class="countdown">2025 YKS'ye Kalan Süre: <span id="countdown-timer">Loading...</span></div>
+        </div>
+        <div class="nav-menu">
+            <button data-exam-type="tyt">TYT</button>
+            <button data-exam-type="ayt">AYT</button>
+            <button data-exam-type="ydt">YDT</button>
+        </div>
+    </header>
+
+    <div class="main-content">
+        <div class="top-section">
+            <div class="stats-boxes">
+                <div class="stat-box">
+                    <h3>Ortalama Net</h3>
+                    <p id="avgNet">0</p>
+                </div>
+                <div class="stat-box">
+                    <h3>Net Artışı</h3>
+                    <span 
+                        style="font-size: 0.8rem; float: right; cursor: pointer;" 
+                        title="Son iki deneme baz alınır." 
+                        onmouseover="showInfo()" 
+                        onmouseout="hideInfo()" 
+                        onclick="toggleInfo(event)"
+                    >
+                        (<i class="fa-solid fa-info"></i>)
+                    </span>
+                    <div id="infoBox" style="display: none; color: var(--light); background-color: rgba(0, 0, 0, 0.8); padding: 10px; border-radius: 5px; position: absolute; left: 100%; top: 0; margin-left: 10px; z-index: 1000;">
+                        Son iki deneme baz alınır.
+                    </div>
+                    <p id="successRate">Net +0%</p>
+                </div>
+                <div class="stat-box">
+                    <h3>Sınav Türü</h3>
+                    <p id="examTypeDisplay">TYT</p>
+                </div>
+                <div class="stat-box">
+                    <div class="beta-icon">
+                        <span class="beta-title">Beta</span>
+                        <i class="fa-solid fa-bell"></i>
+                    </div>
+                    <p id="beta">Henüz deneme girilmemiş</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <div class="graph-section">
+                <canvas id="performanceChart"></canvas>
+            </div>
+            <div class="right-panel">
+                <div class="exam-list">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 45%;">Deneme</th>
+                                <th style="width: 25%;">Tarih</th>
+                                <th style="width: 20%;">Net</th>
+                                <th style="width: 1%;">
+                                    <button class="add-exam-btn" onclick="openExamModal()" style="float: center; padding: 5px 5px; font-size: 0.7rem;">Ekle</button>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="examTableBody">
+                            <!-- Denemeler buraya eklenecek -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TYT Modal -->
+    <div id="tytModal" class="modal">
+        <div class="modal-content">
+            <h2>Yeni TYT Denemesi Ekle</h2><br>
+            <form id="tytForm">
+                <div class="input-row">
+                    <input type="text" placeholder="Deneme Adı" required>
+                    <input type="date" required>
+                </div>
+                
+                <div id="subjectInputs" class="subject-inputs">
+                    <div class="subject-row">
+                        <label>Türkçe (40)</label>
+                        <div class="score-table">
+                            <input type="number" min="0" max="40" placeholder="D" value="0" class="no-spinner">
+                            <input type="number" min="0" max="40" placeholder="Y" value="0" class="no-spinner">
+                        </div>
+                    </div>
+                    
+                    <div class="subject-row">
+                        <label>Tarih (5)</label>
+                        <div class="score-table">
+                            <input type="number" min="0" max="5" placeholder="D" value="0" class="no-spinner">
+                            <input type="number" min="0" max="5" placeholder="Y" value="0" class="no-spinner">
+                        </div>
+                    </div>
+                    
+                    <div class="subject-row">
+                        <label>Coğrafya (5)</label>
+                        <div class="score-table">
+                            <input type="number" min="0" max="5" placeholder="D" value="0" class="no-spinner">
+                            <input type="number" min="0" max="5" placeholder="Y" value="0" class="no-spinner">
+                        </div>
+                    </div>
+                    
+                    <div class="subject-row">
+                        <label>Felsefe (5)</label>
+                        <div class="score-table">
+                            <input type="number" min="0" max="5" placeholder="D" value="0" class="no-spinner">
+                            <input type="number" min="0" max="5" placeholder="Y" value="0" class="no-spinner">
+                        </div>
+                    </div>
+                    
+                    <div class="subject-row">
+                        <label>Din Kültürü (5)</label>
+                        <div class="score-table">
+                            <input type="number" min="0" max="5" placeholder="D" value="0" class="no-spinner">
+                            <input type="number" min="0" max="5" placeholder="Y" value="0" class="no-spinner">
+                        </div>
+                    </div>
+                    
+                    <div class="subject-row">
+                        <label>Matematik (40)</label>
+                        <div class="score-table">
+                            <input type="number" min="0" max="40" placeholder="D" value="0" class="no-spinner">
+                            <input type="number" min="0" max="40" placeholder="Y" value="0" class="no-spinner">
+                        </div>
+                    </div>
+                    
+                    <div class="subject-row">
+                        <label>Fizik (7)</label>
+                        <div class="score-table">
+                            <input type="number" min="0" max="7" placeholder="D" value="0" class="no-spinner">
+                            <input type="number" min="0" max="7" placeholder="Y" value="0" class="no-spinner">
+                        </div>
+                    </div>
+                    
+                    <div class="subject-row">
+                        <label>Kimya (7)</label>
+                        <div class="score-table">
+                            <input type="number" min="0" max="7" placeholder="D" value="0" class="no-spinner">
+                            <input type="number" min="0" max="7" placeholder="Y" value="0" class="no-spinner">
+                        </div>
+                    </div>
+                    
+                    <div class="subject-row">
+                        <label>Biyoloji (6)</label>
+                        <div class="score-table">
+                            <input type="number" min="0" max="6" placeholder="D" value="0" class="no-spinner">
+                            <input type="number" min="0" max="6" placeholder="Y" value="0" class="no-spinner">
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 1rem;">
+                    <button type="submit" class="content-button">Kaydet</button>
+                    <button type="button" onclick="closeModal('tytModal')" class="content-button">İptal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- AYT Modal -->
+    <div id="aytModal" class="modal">
+        <div class="modal-content">
+            <h2>Yeni AYT Denemesi Ekle</h2><br>
+            <form id="aytForm">
+                <div class="input-row">
+                    <input type="text" placeholder="Deneme Adı" required>
+                    <input type="date" required>
+                </div>
+                
+                <div class="subject-inputs">
+                    <div class="subject-row">
+                        <label>Edebiyat (24)</label>
+                        <div class="score-table">
+                            <input type="number" min="0" max="24" placeholder="D" value="0" class="no-spinner">
+                            <input type="number" min="0" max="24" placeholder="Y" value="0" class="no-spinner">
+                        </div>
+                    </div>
+                    
+                    <div class="subject-row">
+                        <label>Tarih-1 (10)</label>
+                        <div class="score-table">
+                            <input type="number" min="0" max="10" placeholder="D" value="0" class="no-spinner">
+                            <input type="number" min="0" max="10" placeholder="Y" value="0" class="no-spinner">
+                        </div>
+                    </div>
+                    
+                    <div class="subject-row">
+                        <label>Coğrafya-1 (6)</label>
+                        <div class="score-table">
+                            <input type="number" min="0" max="6" placeholder="D" value="0" class="no-spinner">
+                            <input type="number" min="0" max="6" placeholder="Y" value="0" class="no-spinner">
+                        </div>
+                    </div>
+                    
+                    <div class="subject-row">
+                        <label>Tarih-2 (11)</label>
+                        <div class="score-table">
+                            <input type="number" min="0" max="11" placeholder="D" value="0" class="no-spinner">
+                            <input type="number" min="0" max="11" placeholder="Y" value="0" class="no-spinner">
+                        </div>
+                    </div>
+                    
+                    <div class="subject-row">
+                        <label>Coğrafya-2 (11)</label>
+                        <div class="score-table">
+                            <input type="number" min="0" max="11" placeholder="D" value="0" class="no-spinner">
+                            <input type="number" min="0" max="11" placeholder="Y" value="0" class="no-spinner">
+                        </div>
+                    </div>
+                    
+                    <div class="subject-row">
+                        <label>Felsefe (12)</label>
+                        <div class="score-table">
+                            <input type="number" min="0" max="12" placeholder="D" value="0" class="no-spinner">
+                            <input type="number" min="0" max="12" placeholder="Y" value="0" class="no-spinner">
+                        </div>
+                    </div>
+                    
+                    <div class="subject-row">
+                        <label>Din Kültürü (6)</label>
+                        <div class="score-table">
+                            <input type="number" min="0" max="6" placeholder="D" value="0" class="no-spinner">
+                            <input type="number" min="0" max="6" placeholder="Y" value="0" class="no-spinner">
+                        </div>
+                    </div>
+                    
+                    <div class="subject-row">
+                        <label>Matematik (40)</label>
+                        <div class="score-table">
+                            <input type="number" min="0" max="40" placeholder="D" value="0" class="no-spinner">
+                            <input type="number" min="0" max="40" placeholder="Y" value="0" class="no-spinner">
+                        </div>
+                    </div>
+                    
+                    <div class="subject-row">
+                        <label>Fizik (14)</label>
+                        <div class="score-table">
+                            <input type="number" min="0" max="14" placeholder="D" value="0" class="no-spinner">
+                            <input type="number" min="0" max="14" placeholder="Y" value="0" class="no-spinner">
+                        </div>
+                    </div>
+                    
+                    <div class="subject-row">
+                        <label>Kimya (13)</label>
+                        <div class="score-table">
+                            <input type="number" min="0" max="13" placeholder="D" value="0" class="no-spinner">
+                            <input type="number" min="0" max="13" placeholder="Y" value="0" class="no-spinner">
+                        </div>
+                    </div>
+                    
+                    <div class="subject-row">
+                        <label>Biyoloji (13)</label>
+                        <div class="score-table">
+                            <input type="number" min="0" max="13" placeholder="D" value="0" class="no-spinner">
+                            <input type="number" min="0" max="13" placeholder="Y" value="0" class="no-spinner">
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 1rem;">
+                    <button type="submit" class="content-button">Kaydet</button>
+                    <button type="button" onclick="closeModal('aytModal')" class="content-button">İptal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- YDT Modal -->
+    <div id="ydtModal" class="modal">
+        <div class="modal-content">
+            <h2>Yeni YDT Denemesi Ekle</h2><br>
+            <form id="ydtForm">
+                <div class="input-row">
+                    <input type="text" placeholder="Deneme Adı" required>
+                    <input type="date" required>
+                </div>
+                
+                <div class="subject-inputs">
+                    <div class="subject-row">
+                        <label>İngilizce (80)</label>
+                        <div class="score-table">
+                            <input type="number" min="0" max="80" placeholder="D" value="0" class="no-spinner">
+                            <input type="number" min="0" max="80" placeholder="Y" value="0" class="no-spinner">
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 1rem;">
+                    <button type="submit" class="content-button">Kaydet</button>
+                    <button type="button" onclick="closeModal('ydtModal')" class="content-button">İptal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Define swipeThreshold at the top of your script
+
+        // Aktif sınav tipi
+        let activeExamType = "tyt"; // Varsayılan olarak TYT
+        
+        // Her sınav tipi için ayrı localStorage kullanma
+        const STORAGE_KEYS = {
+            tyt: 'tytExamData',
+            ayt: 'aytExamData',
+            ydt: 'ydtExamData'
+        };
+        
+        // Her sınav türü için ayrı başarı hedefleri (net bazında)
+        const MAX_SCORES = {
+            tyt: 120, // TYT toplam net
+            ayt: 160, // AYT toplam net
+            ydt: 80   // YDT toplam net
+        };
+        
+        // Her sınav tipi için veriler
+        let examData = {
+            tyt: JSON.parse(localStorage.getItem(STORAGE_KEYS.tyt)) || [],
+            ayt: JSON.parse(localStorage.getItem(STORAGE_KEYS.ayt)) || [],
+            ydt: JSON.parse(localStorage.getItem(STORAGE_KEYS.ydt)) || []
+        };
+        
+        let myChart = null;
+
+        // Geri sayım hesaplama
+        function updateCountdown() {
+            const examDate = new Date('2025-06-15');
+            const now = new Date();
+            const diff = examDate - now;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            document.getElementById('countdown-timer').textContent = days + ' gün';
+        }
+
+        // Beta değerlendirme fonksiyonunu güncelle
+        function updateBetaMessage() {
+            const currentData = examData[activeExamType];
+            if (currentData.length === 0) {
+                animateBetaMessage('📝 Henüz deneme girilmemiş');
+                return;
+            }
+
+            // Tüm olası mesajları hazırla
+            const messages = getBetaMessages(currentData);
+            
+            // İlk mesajı göster
+            let currentMessageIndex = 0;
+            showNextBetaMessage();
+
+            // Her 5 saniyede bir mesajı değiştir
+            function showNextBetaMessage() {
+                animateBetaMessage(messages[currentMessageIndex]);
+                currentMessageIndex = (currentMessageIndex + 1) % messages.length;
+            }
+
+            // Interval'i temizle ve yeniden başlat
+            if (window.betaInterval) {
+                clearInterval(window.betaInterval);
+            }
+            window.betaInterval = setInterval(showNextBetaMessage, 5000); // 5000ms = 5 saniye
+        }
+
+        // Beta mesajlarını hazırlayan fonksiyon
+        function getBetaMessages(currentData) {
+            const messages = [];
+            
+            // Tarihe göre sırala
+            const sortedExams = [...currentData].sort((a, b) => {
+                const dateA = new Date(a.date);
+                const dateB = new Date(b.date);
+                if (dateA.getTime() === dateB.getTime()) {
+                    // Aynı tarihli denemeler için, sonra girilen daha yeni olsun
+                    return currentData.indexOf(b) - currentData.indexOf(a);
+                }
+                return dateB - dateA;
+            });
+
+            // Ortalama net hesapla
+            const totalNets = currentData.reduce((sum, exam) => sum + exam.net, 0);
+            const avgNet = totalNets / currentData.length;
+            const maxScore = MAX_SCORES[activeExamType];
+            const percentage = (avgNet / maxScore) * 100;
+
+            // Ortalama performans mesajı
+            if (percentage < 40) {
+                messages.push('📊 Ortalamanız biraz düşük, daha fazla çalışmalısınız');
+            } else if (percentage < 60) {
+                messages.push('📈 Ortalamanız iyi, biraz daha çaba gösterebilirsiniz');
+            } else if (percentage < 80) {
+                messages.push('🎯 Ortalamanız güzel, böyle devam edin');
+            } else {
+                messages.push('🌟 Harika gidiyorsunuz, bu tempoyu koruyun');
+            }
+
+            // Son deneme performans mesajı
+            if (sortedExams.length >= 2) {
+                const lastExam = sortedExams[0]; // En son girilen deneme
+                const secondLastExam = sortedExams[1]; // Sondan bir önceki deneme
+                const netChange = lastExam.net - secondLastExam.net;
+                
+                if (netChange > 0) {
+                    messages.push('🚀 Son denemede güzel bir artış yakaladınız');
+                } else if (netChange < 0) {
+                    messages.push('📉 Son denemede küçük bir düşüş var, moral bozmayın');
+                } else {
+                    messages.push('⚖️ Son iki denemeniz aynı seviyede');
+                }
+            }
+
+            // Motivasyon mesajları
+            messages.push('💪 Her deneme sizi hedefinize bir adım daha yaklaştırır');
+            messages.push('🎯 Düzenli çalışma başarının anahtarıdır');
+            messages.push('⏰ YKS\'ye az kaldı, zamanı iyi değerlendirin');
+
+
+            return messages;
+        }
+
+        // Beta mesajı için animasyon
+        function animateBetaMessage(message) {
+            const betaText = document.getElementById('beta');
+            
+            // Çıkış animasyonu
+            betaText.style.opacity = '0';
+            betaText.style.transform = 'translateY(10px)';
+            
+            setTimeout(() => {
+                // Mesajı güncelle
+                betaText.textContent = message;
+                
+                // Giriş animasyonu
+                betaText.style.opacity = '1';
+                betaText.style.transform = 'translateY(0)';
+            }, 500);
+        }
+
+        // İstatistikleri güncelleme
+        function updateStats() {
+            const currentData = examData[activeExamType];
+            
+            if (currentData.length === 0) {
+                document.getElementById('avgNet').textContent = '0';
+                document.getElementById('successRate').textContent = 'N/A';
+                updateBetaMessage(); // Beta mesajını güncelle
+                return;
+            }
+
+            // Ortalama net hesaplama
+            const totalNets = currentData.reduce((sum, exam) => sum + exam.net, 0);
+            const avgNet = totalNets / currentData.length;
+            document.getElementById('avgNet').textContent = avgNet.toFixed(2);
+            
+            // Net artışını güncelle
+            updateNetChange();
+            updateBetaMessage(); // Beta mesajını güncelle
+        }
+
+        // Net artışını güncelleme fonksiyonu
+        function updateNetChange() {
+            const currentData = examData[activeExamType];
+
+            if (currentData.length > 1) {
+                // Tarihe göre sırala (yeniden eskiye) ve aynı tarihli denemeleri giriş sırasına göre sırala
+                const sortedExams = [...currentData].sort((a, b) => {
+                    const dateA = new Date(a.date);
+                    const dateB = new Date(b.date);
+                    if (dateA.getTime() === dateB.getTime()) {
+                        // Aynı tarihli denemeler için, sonra girilen daha yeni olsun
+                        return currentData.indexOf(b) - currentData.indexOf(a);
+                    }
+                    return dateB - dateA;
+                });
+                
+                // Son iki denemeyi al
+                const lastExam = sortedExams[0];  // En son girilen deneme
+                const secondLastExam = sortedExams[1];  // Sondan bir önceki deneme
+                
+                // Net değişimini hesapla
+                const netChange = lastExam.net - secondLastExam.net;
+                
+                // Yüzde değişimini hesapla ve tam sayıya yuvarla
+                let percentageChange = Math.round((netChange / secondLastExam.net) * 100);
+                
+                // Artış veya düşüş durumunu belirle
+                const changeDirection = netChange >= 0 ? '↗ ' : '↘ ';
+                const percentageText = Math.abs(percentageChange) + '%';
+                
+                // Sonucu göster
+                document.getElementById('successRate').textContent = `${changeDirection}${percentageText}`;
+            } else {
+                document.getElementById('successRate').textContent = 'N/A';
+            }
+        }
+
+        // Deneme listesini güncelleme
+        function updateExamList() {
+            const currentData = examData[activeExamType];
+            const tbody = document.getElementById('examTableBody');
+            tbody.innerHTML = '';
+
+            // Tarihe göre ve giriş sırasına göre sırala
+            const sortedExams = [...currentData].sort((a, b) => {
+                const dateA = new Date(a.date);
+                const dateB = new Date(b.date);
+                
+                // Eğer tarihler farklıysa, tarihe göre sırala (yeniden eskiye)
+                if (dateA.getTime() !== dateB.getTime()) {
+                    return dateB - dateA;
+                }
+                
+                // Tarihler aynıysa, dizideki konumlarına göre sırala (son girilen üstte)
+                return currentData.indexOf(b) - currentData.indexOf(a);
+            });
+
+            sortedExams.forEach((exam, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${exam.name}</td>
+                    <td>${new Date(exam.date).toLocaleDateString('tr-TR')}</td>
+                    <td>${exam.net.toFixed(2)}</td>
+                    <td style="text-align: center;">
+                        <button onclick="deleteExam(${index})" style="background: none; border: none; color: var(--light); cursor: pointer;">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // LocalStorage'a kaydet
+            localStorage.setItem(STORAGE_KEYS[activeExamType], JSON.stringify(currentData));
+            updateStats();
+            updateChart();
+        }
+
+        // Deneme silme
+        function deleteExam(index) {
+            if (confirm('Bu denemeyi silmek istediğinize emin misiniz?')) {
+                examData[activeExamType].splice(index, 1);
+                updateExamList();
+            }
+        }
+
+        // Grafiği güncelleme
+        function updateChart() {
+            if (!myChart) return;
+            
+            const currentData = examData[activeExamType];
+            const sortedExams = [...currentData].sort((a, b) => new Date(a.date) - new Date(b.date));
+            const netScores = sortedExams.map(exam => exam.net);
+            const average = netScores.length > 0 
+                ? netScores.reduce((sum, score) => sum + score, 0) / netScores.length 
+                : 0;
+            const averageLine = new Array(netScores.length).fill(average);
+            
+            myChart.data.labels = sortedExams.map(exam => exam.name);
+            myChart.data.datasets = [
+                {
+                    label: 'Net',
+                    data: netScores,
+                    backgroundColor: 'rgba(250, 220, 213, 0.5)',
+                    borderColor: 'rgba(250, 220, 213, 1)',
+                    borderWidth: 1,
+                    tension: 0.3,
+                    pointBackgroundColor: 'var(--light)',
+                    pointBorderColor: 'var(--light)',
+                    pointHoverBackgroundColor: 'rgba(250, 220, 213, 1)',
+                    pointHoverBorderColor: 'rgba(250, 220, 213, 1)',
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                },
+                {
+                    label: 'Ortalama',
+                    data: averageLine,
+                    borderColor: 'rgba(255, 255, 255, 0.5)',
+                    borderWidth: 1,
+                    borderDash: [5, 5],
+                    fill: false,
+                    pointRadius: 0,
+                    tension: 0
+                }
+            ];
+            
+            myChart.options.plugins.tooltip.callbacks = {
+                title: function(tooltipItems) {
+                    const index = tooltipItems[0].dataIndex;
+                    const exam = sortedExams[index];
+                    return exam.name;
+                },
+                label: function(tooltipItem) {
+                    const index = tooltipItem.dataIndex;
+                    const exam = sortedExams[index];
+                    return [
+                        `Net: ${exam.net.toFixed(2)}`,
+                        `Tarih: ${new Date(exam.date).toLocaleDateString('tr-TR')}`
+                    ];
+                }
+            };
+
+            myChart.update();
+        }
+
+        // Sınav tipini değiştirme
+        const DURATION_ANIMATION_CIRCLE = 1000; // Animasyon süresi kısaltıldı
+        const DURATION_ANIMATION_OPACITY = 800;
+
+        function createExpandingCircle({ x, y, size }) {
+            const wrapper = document.createElement("div");
+            wrapper.className = "page-transition-circle-wrapper";
+            wrapper.style.setProperty(
+                "--animation-duration-circle",
+                `${DURATION_ANIMATION_CIRCLE}ms`
+            );
+            wrapper.style.setProperty(
+                "--animation-duration-opacity",
+                `${DURATION_ANIMATION_OPACITY}ms`
+            );
+
+            const circle = document.createElement("div");
+            circle.className = "page-transition-circle";
+            circle.style.left = `${x}px`;
+            circle.style.top = `${y}px`;
+            circle.style.width = `${size}px`;
+            circle.style.height = `${size}px`;
+
+            wrapper.appendChild(circle);
+            document.body.appendChild(wrapper);
+
+            setTimeout(() => {
+                circle.style.opacity = "0";
+            }, DURATION_ANIMATION_CIRCLE - DURATION_ANIMATION_OPACITY);
+
+            setTimeout(() => {
+                wrapper.remove();
+            }, DURATION_ANIMATION_CIRCLE);
+        }
+
+        function changeExamType(examType) {
+            const buttons = document.querySelectorAll('.nav-menu button');
+            buttons.forEach(button => {
+                button.classList.remove('selected'); // Tüm butonlardan 'selected' sınıfını kaldır
+            });
+
+            const clickedButton = Array.from(buttons).find(button => button.dataset.examType === examType);
+            
+            if (clickedButton) {
+                clickedButton.classList.add('selected'); // Seçilen butona 'selected' sınıfını ekle
+                const rect = clickedButton.getBoundingClientRect();
+                const x = rect.left + rect.width / 2;
+                const y = rect.top + rect.height / 2;
+                const size = Math.max(window.innerWidth, window.innerHeight) * 2;
+
+                createExpandingCircle({ x, y, size });
+            }
+
+            // Kısa bir gecikme ile diğer işlemleri yap
+            setTimeout(() => {
+                activeExamType = examType;
+                document.title = `YKS Takip Sistemi - ${activeExamType.toUpperCase()}`;
+                document.getElementById('examTypeDisplay').textContent = activeExamType.toUpperCase();
+                updateExamList();
+                updateStats();
+                updateChart();
+            }, 300); // 300ms gecikme
+        }
+        
+        // Pop-up açma fonksiyonu
+        function openExamModal() {
+            // Sınav tipine göre doğru modalı aç
+            const modalId = `${activeExamType}Modal`;
+            
+            // Bugünün tarihini varsayılan olarak ayarla
+            const today = new Date().toISOString().split('T')[0];
+            document.querySelector(`#${modalId} input[type="date"]`).value = today;
+            
+            // Input alanlarını sıfırla
+            document.querySelectorAll(`#${modalId} .subject-row input[type="number"]`).forEach(input => {
+                input.value = '0';
+            });
+            
+            // Pop-up'ı göster
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        // Pop-up kapatma fonksiyonu
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Sayfa yüklendiğinde çalışacak
+        document.addEventListener('DOMContentLoaded', () => {
+            let startX = 0;
+            let endX = 0;
+            
+            // Dokunmatik ekran için
+            document.addEventListener('touchstart', e => {
+                startX = e.changedTouches[0].screenX;
+            });
+            
+            document.addEventListener('touchend', e => {
+                endX = e.changedTouches[0].screenX;
+                handleSwipe();
+            });
+            
+            // Mouse için
+            document.addEventListener('mousedown', e => {
+                startX = e.clientX;
+            });
+            
+            document.addEventListener('mouseup', e => {
+                endX = e.clientX;
+                handleSwipe();
+            });
+            
+            let swipeDistance = 0; // Define swipeDistance
+
+            function handleSwipe() {
+                swipeDistance = endX - startX; // Calculate swipe distance
+
+                // Soldan sağa kaydırma algılandığında
+                if (swipeDistance > swipeThreshold) {
+                    window.location.href = 'home.html';
+                }
+            }
+            
+            // Mevcut temayı localStorage'dan al
+            const currentTheme = localStorage.getItem('selectedTheme') || 'cosmic-purple';
+            
+            // Temayı uygula
+            if (window.themeManager) {
+                themeManager.changeTheme(currentTheme);
+            }
+            
+            // Eğer tema metalic-gold-pink ise body'ye sınıf ekle
+            if (currentTheme === 'metalic-gold-pink') {
+                document.body.classList.add('metalic-gold-pink');
+            }
+            
+            // Diğer sayfa yükleme işlemleri...
+            updateCountdown();
+            setInterval(updateCountdown, 86400000);
+            
+            // Grafik oluştur
+            const ctx = document.getElementById('performanceChart').getContext('2d');
+            myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: 'Net',
+                            data: [],
+                            backgroundColor: 'rgba(250, 220, 213, 0.5)',
+                            borderColor: 'rgba(250, 220, 213, 1)',
+                            borderWidth: 1,
+                            tension: 0.3,
+                            pointBackgroundColor: 'var(--light)',
+                            pointBorderColor: 'var(--light)',
+                            pointHoverBackgroundColor: 'rgba(250, 220, 213, 1)',
+                            pointHoverBorderColor: 'rgba(250, 220, 213, 1)',
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                        },
+                        {
+                            label: 'Ortalama',
+                            data: [],
+                            borderColor: 'rgba(255, 255, 255, 0.5)',
+                            borderWidth: 1,
+                            borderDash: [5, 5],
+                            fill: false,
+                            pointRadius: 0,
+                            tension: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            enabled: true,
+                        mode: 'nearest',
+                            intersect: true,
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#fff',
+                            titleFont: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            bodyColor: '#fff',
+                            bodyFont: {
+                                size: 13
+                            },
+                            padding: 12,
+                            borderColor: 'rgba(255, 255, 255, 0.3)',
+                            borderWidth: 1,
+                            displayColors: false,
+                            callbacks: {
+                                title: function(tooltipItems) {
+                                    const index = tooltipItems[0].dataIndex;
+                                    const exam = sortedExams[index];
+                                    return exam.name;
+                                },
+                                label: function(tooltipItem) {
+                                    const index = tooltipItem.dataIndex;
+                                    const exam = sortedExams[index];
+                                    return [
+                                        `Net: ${exam.net.toFixed(2)}`,
+                                        `Tarih: ${new Date(exam.date).toLocaleDateString('tr-TR')}`
+                                    ];
+                                }
+                            }
+                        }
+                    },
+                    interaction: {
+                        mode: 'nearest',
+                        intersect: true,
+                        axis: 'x'
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: MAX_SCORES[activeExamType],
+                            border: {
+                                color: '#FADCD5',
+                                width: 2
+                            },
+                            ticks: {
+                                color: '#FADCD5',
+                                stepSize: 10,
+                                font: {
+                                    size: 10
+                                }
+                            },
+                            grid: {
+                                display: false,
+                                drawBorder: true,
+                                borderColor: '#FADCD5'
+                            }
+                        },
+                        x: {
+                            border: {
+                                color: '#FADCD5',
+                                width: 2
+                            },
+                            ticks: {
+                                color: '#FADCD5'
+                            },
+                            grid: {
+                                display: false,
+                                drawBorder: true,
+                                borderColor: '#FADCD5'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Sınav türü düğmeleri
+            const examTypeButtons = document.querySelectorAll('.nav-menu button');
+            examTypeButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    changeExamType(button.dataset.examType);
+                });
+            });
+            
+            // Modallar için dışarı tıklama olayları
+            window.onclick = function(event) {
+                const modals = document.querySelectorAll('.modal');
+                modals.forEach(modal => {
+                    if (event.target === modal) {
+                        modal.style.display = 'none';
+                    }
+                });
+            };
+            
+            // TYT Deneme formu
+            document.getElementById('tytForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveExam('tyt', this);
+            });
+            
+            // AYT Deneme formu
+            document.getElementById('aytForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveExam('ayt', this);
+            });
+            
+            // YDT Deneme formu
+            document.getElementById('ydtForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveExam('ydt', this);
+            });
+            
+            // Başlangıçta seçili sınav türünü ayarla
+            changeExamType(activeExamType);
+            
+            // Tüm number inputları seç
+            const numberInputs = document.querySelectorAll('.subject-inputs input[type="number"]');
+            
+            // Her input için fokus olduğunda içeriği temizle
+            numberInputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.value = '';
+                });
+                
+                // Input boş bırakılırsa değeri 0'a ayarla
+                input.addEventListener('blur', function() {
+                    if (this.value === '') {
+                        this.value = '0';
+                    }
+                });
+            });
+
+            // Nav menu butonlarına tıklama olayı ekle
+            const navButtons = document.querySelectorAll('.nav-button');
+            navButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const examType = button.dataset.examType;
+                    changeExamType(examType);
+                });
+            });
+            
+            // İlk yüklemede TYT'yi seçili yap
+            const tytButton = document.querySelector('[data-exam-type="tyt"]');
+            if (tytButton) {
+                tytButton.classList.add('selected');
+            }
+        });
+        
+        // Deneme kaydetme fonksiyonu
+        function saveExam(examType, form) {
+            const examName = form.querySelector('input[type="text"]').value;
+            const examDate = form.querySelector('input[type="date"]').value;
+            
+            let totalNet = 0;
+            const subjectResults = {};
+            
+            // Her ders için net hesaplama
+            const subjectRows = form.querySelectorAll('.subject-row');
+            subjectRows.forEach(row => {
+                const subject = row.querySelector('label').textContent;
+                const correct = parseInt(row.querySelector('input[placeholder="D"]').value) || 0;
+                const wrong = parseInt(row.querySelector('input[placeholder="Y"]').value) || 0;
+                const net = correct - (wrong * 0.25);
+                subjectResults[subject] = net;
+                totalNet += net;
+            });
+            
+            // Yeni denemeyi kaydet
+            examData[examType].push({
+                name: examName,
+                date: examDate,
+                net: totalNet,
+                subjects: subjectResults
+            });
+            
+            // Modal'ı kapat
+            closeModal(`${examType}Modal`);
+            
+            // Formu temizle
+            form.reset();
+            
+            // Ekranı güncelle
+            if (activeExamType === examType) {
+                updateExamList();
+                updateStats();
+            }
+        }
+
+        // Özel tooltip fonksiyonu
+        function showCustomTooltip(event, text) {
+            // Varsa eski tooltip'i kaldır
+            const oldTooltip = document.getElementById('customTooltip');
+            if (oldTooltip) {
+                oldTooltip.remove();
+            }
+
+            // Yeni tooltip oluştur
+            const tooltip = document.createElement('div');
+            tooltip.id = 'customTooltip';
+            tooltip.innerHTML = text;
+            tooltip.style.position = 'absolute';
+            tooltip.style.left = event.x + 'px';
+            tooltip.style.top = event.y + 'px';
+            tooltip.style.backgroundColor = 'var(--secondary)';
+            tooltip.style.color = 'var(--light)';
+            tooltip.style.padding = '8px';
+            tooltip.style.borderRadius = '4px';
+            tooltip.style.fontSize = '12px';
+            tooltip.style.zIndex = '1000';
+            tooltip.style.pointerEvents = 'none';
+            tooltip.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+
+            document.body.appendChild(tooltip);
+
+            // 2 saniye sonra tooltip'i kaldır
+            setTimeout(() => {
+                tooltip.remove();
+            }, 2000);
+        }
+
+        // CSS ekle
+        const style = document.createElement('style');
+        style.textContent = `
+            #customTooltip {
+                animation: fadeInOut 2s ease-in-out;
+            }
+
+            @keyframes fadeInOut {
+                0% { opacity: 0; }
+                10% { opacity: 1; }
+                90% { opacity: 1; }
+                100% { opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        function showInfo() {
+            const infoBox = document.getElementById('infoBox');
+            infoBox.style.display = 'block'; // Bilgi kutusunu göster
+        }
+
+        function hideInfo() {
+            const infoBox = document.getElementById('infoBox');
+            if (infoBox.style.display === 'block') {
+                infoBox.style.display = 'none'; // Bilgi kutusunu gizle
+            }
+        }
+
+        function toggleInfo(event) {
+            const infoBox = document.getElementById('infoBox');
+            // Tıklama ile bilgi kutusunu aç veya kapat
+            if (infoBox.style.display === 'none' || infoBox.style.display === '') {
+                infoBox.style.display = 'block'; // Bilgi kutusunu göster
+            } else {
+                infoBox.style.display = 'none'; // Bilgi kutusunu gizle
+            }
+            event.stopPropagation(); // Tıklama olayını durdur
+        }
+
+        // Dışarı tıklama ile bilgi kutusunu kapatma
+        document.addEventListener('click', function(event) {
+            const infoBox = document.getElementById('infoBox');
+            const infoIcon = document.querySelector('span[onclick="toggleInfo(event)"]');
+            if (!infoBox.contains(event.target) && !infoIcon.contains(event.target)) {
+                infoBox.style.display = 'none'; // Bilgi kutusunu gizle
+            }
+        });
+
+        function triggerAlarm(alarm) {
+            // Ses çal
+            new Audio('Res/Crystal_Drop.mp3').play().catch(err => console.log('Ses hatası:', err));
+            
+            // Bildirim izni kontrolü ve gösterimi
+            if (Notification.permission === "granted") {
+                new Notification(`⏰ ${alarm.name}`, {
+                    body: "Alarm zamanı geldi!",
+                    icon: "../Res/logo.png"
+                });
+            } else if (Notification.permission !== "denied") {
+                Notification.requestPermission().then(permission => {
+                    if (permission === "granted") {
+                        new Notification(`⏰ ${alarm.name}`, {
+                            body: "Alarm zamanı geldi!",
+                            icon: "../Res/logo.png"
+                        });
+                    }
+                });
+            }
+            
+            this.deleteAlarm(alarm.id);
+        }
+    </script>
+
+
+</body>
+</html>
+
