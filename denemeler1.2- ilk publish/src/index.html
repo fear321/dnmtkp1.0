@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YKS Takip Sistemi</title>
+    <title>YKS Takip - Deneme Analizi</title>
+    <link rel="manifest" href="../manifest.json">
+    <meta name="theme-color" content="#3a6df0">
+    <link rel="apple-touch-icon" href="../Res/logo(192).png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
@@ -1453,14 +1456,22 @@ body::after {
                 return currentData.indexOf(b) - currentData.indexOf(a);
             });
 
+            // Her deneme için benzersiz bir tanımlayıcı oluştur
+            const examMap = new Map();
             sortedExams.forEach((exam, index) => {
+                const uniqueKey = `${exam.name}-${exam.date}-${exam.net}-${index}`;
+                examMap.set(uniqueKey, exam);
+            });
+
+            sortedExams.forEach((exam, index) => {
+                const uniqueKey = `${exam.name}-${exam.date}-${exam.net}-${index}`;
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${exam.name}</td>
                     <td>${new Date(exam.date).toLocaleDateString('tr-TR')}</td>
                     <td>${exam.net.toFixed(2)}</td>
                     <td style="text-align: center;">
-                        <button onclick="deleteExam(${index})" style="background: none; border: none; color: var(--light); cursor: pointer;">
+                        <button onclick="deleteExamByKey('${uniqueKey}')" style="background: none; border: none; color: var(--light); cursor: pointer;">
                             <i class="fa-solid fa-trash"></i>
                         </button>
                     </td>
@@ -1472,13 +1483,32 @@ body::after {
             localStorage.setItem(STORAGE_KEYS[activeExamType], JSON.stringify(currentData));
             updateStats();
             updateChart();
+
+            // examMap'i global olarak sakla
+            window.currentExamMap = examMap;
         }
 
-        // Deneme silme
-        function deleteExam(index) {
+        // Yeni silme fonksiyonu
+        function deleteExamByKey(uniqueKey) {
+            if (!window.currentExamMap || !window.currentExamMap.has(uniqueKey)) {
+                return;
+            }
+
             if (confirm('Bu denemeyi silmek istediğinize emin misiniz?')) {
-                examData[activeExamType].splice(index, 1);
-                updateExamList();
+                const examToDelete = window.currentExamMap.get(uniqueKey);
+                const currentData = examData[activeExamType];
+                
+                // Tam eşleşme ile denemeyi bul ve sil
+                const indexToDelete = currentData.findIndex(exam => 
+                    exam.name === examToDelete.name &&
+                    exam.date === examToDelete.date &&
+                    exam.net === examToDelete.net
+                );
+
+                if (indexToDelete !== -1) {
+                    currentData.splice(indexToDelete, 1);
+                    updateExamList();
+                }
             }
         }
 
@@ -1854,8 +1884,12 @@ body::after {
                 totalNet += net;
             });
             
+            // Benzersiz ID oluştur
+            const uniqueId = Date.now().toString();
+            
             // Yeni denemeyi kaydet
             examData[examType].push({
+                id: uniqueId,
                 name: examName,
                 date: examDate,
                 net: totalNet,

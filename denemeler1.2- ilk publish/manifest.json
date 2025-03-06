@@ -1,0 +1,23 @@
+{
+  "name": "YKS Mate",
+  "short_name": "YKS Mate",
+  "description": "YKS sınavı için deneme takip ve analiz uygulaması",
+  "start_url": "/src/home.html",
+  "display": "standalone",
+  "background_color": "#0d0b14",
+  "theme_color": "#3a6df0",
+  "icons": [
+    {
+      "src": "Res/logo(192).png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "Res/logo(512).png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+} 
