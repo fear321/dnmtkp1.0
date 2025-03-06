@@ -1,0 +1,1587 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YKS Takip - Zamanlayıcı</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        :root {
+            --primary: #1a1d2b;
+            --secondary: #252736;
+            --accent: #3a6df0;
+            --light: #E5B8F4;
+            --border: #4A3B4E;
+            --dark: #2D222F;
+            --highlight: #7C81AD;
+            --background: #0d0b14;
+        }
+
+        body {
+            background: url('../Res/purplestar.jpeg') no-repeat center center fixed;
+            background-size: cover;
+            color: var(--light);
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .header {
+            background: url('../Res/Zerallys.jpeg');
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            width: 100%;
+            height: 100px;
+            justify-content: space-between;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            opacity: 0.6;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+        }
+
+        header::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(2px);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .back-button {
+            background-color: var(--accent);
+            color: var(--light);
+            border: none;
+            border-radius: 4px;
+            padding: 0.5rem;
+            cursor: pointer;
+            font-size: 1.2rem;
+            height: 70px;
+            width: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .welcome-countdown-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            margin-left: 1rem;
+            flex-grow: 1;
+        }
+
+        .welcome-text, .countdown {
+            text-align: left;
+            margin: 0;
+        }
+
+        .welcome-text {
+            font-size: 1.4rem;
+        }
+
+        /* Sayfa geçiş animasyonu için stiller */
+        .page-transition-circle-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        .page-transition-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--accent);
+            transform: translate(-50%, -50%) scale(0);
+            transition: opacity var(--animation-duration-opacity) ease-in-out;
+            animation: circle-expand var(--animation-duration-circle) ease-out forwards;
+        }
+
+        @keyframes circle-expand {
+            to {
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        .fullscreen-button {
+            background: var(--accent);
+            color: var(--light);
+            border: none;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 100000;
+            opacity: 0.8;
+            pointer-events: auto !important;
+        }
+
+        .fullscreen-button:hover {
+            transform: scale(1.1);
+            opacity: 1;
+            background: var(--highlight);
+        }
+
+        .fullscreen-mode {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            max-width: none !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            background: var(--background) !important;
+            z-index: 9999 !important;
+            transform: none !important;
+            backdrop-filter: none !important;
+        }
+
+        .fullscreen-mode.dark {
+            background-color: #000000 !important;
+            background-image: none !important;
+        }
+
+        .fullscreen-mode.light {
+            background: url('../Res/purplestar.jpeg') no-repeat center center fixed !important;
+            background-size: cover !important;
+        }
+
+        .fullscreen-mode.light::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .fullscreen-mode .timer-section.active {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 100% !important;
+            height: 100% !important;
+            flex-direction: column !important;
+            position: relative !important;
+            z-index: 10001 !important;
+        }
+
+        .fullscreen-mode .timer-section.active .timer-display {
+            font-size: min(20vw, 12rem) !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            line-height: 1 !important;
+            position: relative !important;
+            z-index: 10002 !important;
+            text-shadow: 0 0 20px rgba(0, 0, 0, 0.5) !important;
+        }
+
+        .fullscreen-mode .timer-section.active .timer-display .seconds {
+            font-size: min(5vw, 3rem) !important;
+        }
+
+        .fullscreen-mode .timer-section.active .timer-controls {
+            margin-top: 2rem !important;
+            display: flex !important;
+            gap: 2rem !important;
+        }
+
+        .fullscreen-mode .timer-section.active .control-button {
+            width: 60px !important;
+            height: 60px !important;
+            font-size: 1.5rem !important;
+        }
+
+        /* Tam ekran modunda gizlenecek elementler */
+        .fullscreen-mode .timer-mode-buttons,
+        .fullscreen-mode .timer-nav,
+        .fullscreen-mode .pomodoro-info,
+        .fullscreen-mode .lap-times,
+        .fullscreen-mode .alarm-input,
+        .fullscreen-mode .alarm-list {
+            display: none !important;
+        }
+
+        @media screen and (orientation: landscape) {
+            .fullscreen-mode .timer-section.active .timer-display {
+                font-size: min(20vh, 12rem) !important;
+            }
+            
+            .fullscreen-mode .timer-section.active .timer-display .seconds {
+                font-size: min(5vh, 3rem) !important;
+            }
+
+            .fullscreen-mode .timer-section.active .timer-controls {
+                margin-top: 1rem !important;
+            }
+        }
+
+        /* Tam ekran çıkış butonu */
+        .exit-fullscreen {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--accent);
+            color: var(--light);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 999999;
+            opacity: 0.8;
+        }
+
+        .exit-fullscreen:hover {
+            transform: scale(1.1);
+            opacity: 1;
+            background: var(--highlight);
+        }
+
+        body.fullscreen .exit-fullscreen {
+            display: flex;
+        }
+
+        .nav-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: none;
+            border: none;
+            color: var(--light);
+            opacity: 0.7;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            padding: 10px;
+            flex: 1;
+            text-align: center;
+        }
+
+        .nav-button i {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+
+        .nav-button span {
+            font-size: 0.8rem;
+        }
+
+        .nav-button.active {
+            opacity: 1;
+            color: var(--accent);
+        }
+
+        .nav-button:hover {
+            opacity: 1;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 600px) {
+            .bottom-nav {
+                display: flex;
+            }
+        }
+
+        @media (min-width: 601px) {
+            .bottom-nav {
+                display: none;
+            }
+        }
+
+        /* Ana içerik alanı */
+        .main-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            margin-top: 100px;
+            z-index: 99;
+        }
+
+        /* Timer navigasyon butonları */
+        .timer-nav {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .timer-nav-button {
+            background: var(--secondary);
+            color: var(--light);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            opacity: 0.7;
+        }
+
+        .timer-nav-button.selected {
+            background: var(--accent);
+            opacity: 1;
+            transform: scale(1.05);
+        }
+
+        .timer-nav-button i {
+            font-size: 1.2rem;
+        }
+
+        /* Timer bölümleri */
+        .timer-section {
+            display: none;
+            text-align: center;
+        }
+
+        .timer-section.active {
+            display: block;
+        }
+
+        /* Timer mod butonları */
+        .timer-mode-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .mode-button {
+            background: var(--secondary);
+            color: var(--light);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0.7;
+        }
+
+        .mode-button.selected {
+            background: var(--accent);
+            opacity: 1;
+        }
+
+        /* Timer ekranı */
+        .timer-display {
+            font-size: 6rem;
+            font-weight: bold;
+            margin: 2rem 0;
+            color: var(--light);
+            text-shadow: 0 0 10px rgba(229, 184, 244, 0.3);
+        }
+
+        .timer-display .seconds {
+            font-size: 1.5rem;
+            opacity: 0.8;
+            display: inline;
+        }
+
+        /* Kontrol butonları */
+        .timer-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .control-button {
+            background: var(--accent);
+            color: var(--light);
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .control-button:hover {
+            transform: scale(1.1);
+            background: var(--highlight);
+        }
+
+        /* Oturum bilgisi */
+        .session-info {
+            font-size: 1.2rem;
+            color: var(--light);
+            opacity: 0.8;
+        }
+
+        /* Tur zamanları */
+        .lap-times {
+            margin-top: 2rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .lap-time {
+            background: var(--secondary);
+            padding: 0.5rem;
+            margin: 0.5rem 0;
+            border-radius: 4px;
+        }
+
+        /* Alarm giriş alanı */
+        .alarm-input {
+            position: relative;
+            width: 90%;
+            max-width: 400px;
+            margin: 40px auto 40px auto;
+            padding: 20px;
+            background: rgba(37, 39, 54, 0.7);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+        }
+
+        .alarm-input input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--border);
+            background: rgba(29, 29, 39, 0.6);
+            color: var(--light);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+        }
+
+        .alarm-input input:focus {
+            border-color: var(--accent);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(58, 109, 240, 0.3);
+        }
+
+        #addAlarmBtn {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1rem;
+            border-radius: 8px;
+            background: var(--accent);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 10px;
+        }
+
+        #addAlarmBtn:hover {
+            background: var(--highlight);
+            transform: translateY(-2px);
+        }
+
+        /* Alarm listesi */
+        .alarm-list {
+            position: relative;
+            width: 90%;
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .alarm-item {
+            background: rgba(37, 39, 54, 0.7);
+            padding: 1.2rem;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid var(--border);
+            margin-bottom: 10px;
+        }
+
+        .alarm-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            border-color: var(--accent);
+        }
+
+        .alarm-item span {
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .alarm-controls {
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .edit-btn, .delete-btn {
+            padding: 0.5rem;
+            border-radius: 6px;
+            background: rgba(58, 109, 240, 0.2);
+            color: var(--light);
+            transition: all 0.3s ease;
+        }
+
+        .edit-btn:hover, .delete-btn:hover {
+            background: var(--accent);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            width: 150px;
+            padding: 1rem;
+            border-radius: 10px;
+            z-index: 100;
+        }
+
+        .nav-menu-button {
+            background-color: var(--secondary);
+            color: var(--light);
+            border: none;
+            padding: 0.1rem 0.5rem; 
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-menu-button.selected {
+            background-color: var(--accent);
+            opacity: 1;
+        }
+
+        .nav-menu-button:hover {
+            background-color: var(--accent);
+            opacity: 1;
+        }
+
+        /* Circle animasyonu için stiller */
+        .nav-circle {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            background: var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            transition: transform 0.15s ease;
+            z-index: 1000;
+        }
+
+        @keyframes circleExpand {
+            0% {
+                transform: scale(0);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .nav-circle.expand {
+            animation: circleExpand 0.3s ease-out forwards;
+        }
+
+        /* Circle animasyonu için stiller */
+        .expanding-circle {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            background: var(--accent);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.5;
+            transition: width 0.5s ease-out, height 0.5s ease-out;
+        }
+
+        /* Medya sorguları */
+        @media (max-width: 768px) {
+            .welcome-text {
+                font-size: 1.2rem;
+            }
+            .session-info {
+                font-size: 1rem;
+            }
+            .nav-menu-button {
+                font-sifze: 0.8rem;
+            }
+            .timer-display {
+                font-size: 5rem;
+            }
+            .timer-display .seconds {
+                font-size: 1.3rem;
+            }
+            .main-content {
+                padding: 1.5rem;
+            }
+            .nav-menu {
+                width: 130px;
+            }
+            .alarm-input {
+                margin: 1rem;
+                padding: 1rem;
+            }
+            
+            .alarm-item span {
+                font-size: 1rem;
+            }
+            
+            .alarm-input input {
+                padding: 0.8rem;
+            }
+        }
+
+        @media (max-width: 550px) {
+            .welcome-text {
+                font-size: 0.9rem;
+            }
+            .session-info {
+                font-size: 0.7rem;
+            }
+            .nav-menu-button {
+                font-size: 0.7rem;
+                padding: 0.3rem;
+            }
+            .timer-display {
+                font-size: 4rem;
+            }
+            .timer-display .seconds {
+                font-size: 1.1rem;
+            }
+            .main-content {
+                padding: 1rem;
+                margin: 1rem auto;
+            }
+            .nav-menu {
+                width: 110px;
+            }
+            .mode-button {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+            .alarm-input {
+                margin: 0.5rem;
+            }
+            
+            .alarm-item {
+                padding: 1rem;
+            }
+            
+            .alarm-item span {
+                font-size: 0.9rem;
+            }
+            
+            .edit-btn, .delete-btn {
+                padding: 0.4rem;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .header-buttons {
+            width: 30px;
+            }
+            .welcome-text {
+                font-size: 0.8rem;
+            }
+            .session-info {
+                font-size: 0.6rem;
+            }
+            .nav-menu-button {
+                font-size: 0.6rem;
+                padding: 0.2rem;
+            }
+            .timer-display {
+                font-size: 3rem;
+                margin: 1rem 0;
+            }
+            .timer-display .seconds {
+                font-size: 0.9rem;
+            }
+            .main-content {
+                max-width: 95%;
+                padding: 0.8rem;
+                margin: 0.8rem auto;
+            }
+            .nav-menu {
+                width: 100px;
+            }
+            .mode-button {
+                padding: 0.3rem 0.6rem;
+                font-size: 0.7rem;
+            }
+            .control-button {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
+            .alarm-input {
+                margin: 0.5rem;
+            }
+            
+            .alarm-item {
+                padding: 1rem;
+            }
+            
+            .alarm-item span {
+                font-size: 0.9rem;
+            }
+            
+            .edit-btn, .delete-btn {
+                padding: 0.4rem;
+            }
+        }
+
+        @media (max-width: 350px) {
+            .timer-display {
+                font-size: 2.5rem;
+            }
+            .timer-display .seconds {
+                font-size: 0.8rem;
+            }
+            .nav-menu-button {
+                font-size: 0.5rem;
+            }
+            .mode-button {
+                padding: 0.2rem 0.4rem;
+                font-size: 0.6rem;
+            }
+            .control-button {
+                width: 45px;
+                height: 45px;
+                font-size: 1rem;
+            }
+            .main-content {
+                padding: 0.5rem;
+            }
+            .alarm-input {
+                margin: 0.5rem;
+            }
+            
+            .alarm-item {
+                padding: 1rem;
+            }
+            
+            .alarm-item span {
+                font-size: 0.9rem;
+            }
+            
+            .edit-btn, .delete-btn {
+                padding: 0.4rem;
+            }
+        }
+
+        /* Alarm section için güncelleme */
+        #alarm-section {
+            display: none;
+            position: relative;
+            width: 100%;
+            height: calc(100vh - 100px); /* Header yüksekliğine göre ayarlandı */
+            padding-top: 20px; /* Üstten biraz boşluk */
+        }
+
+        #alarm-section.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Alarm giriş alanı */
+        .alarm-input {
+            position: relative; /* absolute yerine relative */
+            width: 90%;
+            max-width: 400px;
+            margin: 40px auto 40px auto; /* Üst ve alt margin ekledik */
+            padding: 20px;
+            background: rgba(37, 39, 54, 0.7);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+        }
+
+        /* Alarm listesi */
+        .alarm-list {
+            position: relative; /* absolute yerine relative */
+            width: 90%;
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* Alarm öğeleri için margin düzeltmesi */
+        .alarm-item {
+            margin-bottom: 10px;
+        }
+
+        /* Alarm input alanları için stil güncellemesi */
+        .alarm-input input {
+            margin-bottom: 10px;
+        }
+
+        #addAlarmBtn {
+            margin-top: 10px;
+        }
+
+        /* Header butonları için container */
+        .header-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-right: 0px;
+        }
+
+        /* Dark mod ve fullscreen butonları için ortak stiller */
+        .fullscreen-button,
+        .dark-mode-button {
+            background: var(--accent);
+            color: var(--light);
+            border: none;
+            width: 40px;
+            height: 35px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 100000;
+            opacity: 0.8;
+            pointer-events: auto !important;
+        }
+
+        .fullscreen-button:hover,
+        .dark-mode-button:hover {
+            transform: scale(1.1);
+            opacity: 1;
+            background: var(--highlight);
+        }
+
+        /* Dark mod için arkaplan güncellemesi */
+        .fullscreen-mode.dark {
+            background-color: #000000 !important;
+            background-image: none !important;
+        }
+
+        .fullscreen-mode.dark::after {
+            display: none !important;
+        }
+
+        /* Dark mod için body arkaplan güncellemesi */
+        body.dark-mode {
+            background-color: #000000 !important;
+            background-image: none !important;
+        }
+
+        body.dark-mode::after {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <button class="back-button" onclick="window.location.href='home.html'">
+            <i class="fa-solid fa-person-running"></i>
+        </button>
+        <div class="welcome-countdown-container">
+            <div class="welcome-text">Zamanlayıcı</div>
+            <div class="session-info">
+                Tamamlanan Pomodoro: <span id="completedCount">0</span>
+            </div>
+        </div>
+        <div class="header-buttons">
+            <button class="fullscreen-button" id="fullscreenBtn">
+                <i class="fas fa-expand"></i>
+            </button>
+            <button class="dark-mode-button" id="darkModeBtn">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+        <div class="nav-menu">
+            <button class="nav-menu-button selected" data-tab="pomodoro">
+                Pomodoro
+            </button>
+            <button class="nav-menu-button" data-tab="stopwatch">
+                Kronometre
+            </button>
+            <button class="nav-menu-button" data-tab="alarm">
+                Alarm
+            </button>
+        </div>
+    </header>
+
+    <button class="exit-fullscreen" id="exitFullscreenBtn">
+        <i class="fas fa-compress"></i>
+    </button>
+
+    <div class="main-content">
+        <div class="timer-nav"></div>
+
+        <!-- Pomodoro Bölümü -->
+        <div class="timer-section active" id="pomodoro-section">
+            <div class="timer-mode-buttons">
+                <button class="mode-button selected" data-mode="pomodoro">Pomodoro</button>
+                <button class="mode-button" data-mode="shortBreak">Kısa Mola</button>
+                <button class="mode-button" data-mode="longBreak">Uzun Mola</button>
+            </div>
+            <div class="timer-display">25:00</div>
+            <div class="timer-controls">
+                <button id="start" class="control-button">
+                    <i class="fas fa-play"></i>
+                </button>
+                <button id="pause" class="control-button" style="display: none;">
+                    <i class="fas fa-pause"></i>
+                </button>
+                <button id="reset" class="control-button">
+                    <i class="fas fa-redo"></i>
+                </button>
+            </div>
+            <br>
+
+            <div class="pomodoro-info" id="pomodoroInfo"><br>
+                <p><strong>Pomodoro Nasıl Yapılır?</strong></p>
+                <p>25 dakika boyunca çalışın, ardından 5 dakika mola verin. Bu döngüyü 4 kez tekrarladıktan sonra 15-30 dakika daha uzun bir mola verin.</p>
+                <button id="closePomodoroInfo" style="background: none; border: none; color: var(--accent); cursor: pointer; font-size: 1.2rem;">X</button>
+            </div>
+        </div>
+
+        <!-- Kronometre Bölümü -->
+        <div class="timer-section" id="stopwatch-section">
+            <div class="timer-display" id="stopwatchDisplay">00.00.<span class="seconds">00</span></div>
+            <div class="timer-controls">
+                <button id="stopwatchStartBtn" class="control-button">
+                    <i class="fas fa-play"></i>
+                </button>
+                <button id="stopwatchLapBtn" class="control-button">
+                    <i class="fas fa-flag"></i>
+                </button>
+                <button id="stopwatchResetBtn" class="control-button">
+                    <i class="fas fa-redo"></i>
+                </button>
+            </div>
+            <div class="lap-times"></div>
+        </div>
+
+        <!-- Alarm Bölümü -->
+        <div class="timer-section" id="alarm-section">
+            <div class="alarm-input">
+                <input type="text" id="alarmName" placeholder="Alarm Adı" />
+                <input type="time" id="alarmTime">
+                <button id="addAlarmBtn" class="control-button">
+                    <i class="fas fa-plus"></i> Alarm Ekle
+                </button>
+            </div>
+            <div class="alarm-list"></div>
+        </div>
+    </div>
+
+    <script src="themes.js"></script>
+    <script>
+        // Global değişkenler
+        let isRunning = false;
+        let currentTime = 25 * 60; // 25 dakika
+        let timerId = null;
+        let completedPomodoros = 0;
+
+        // Timer mod süreleri (saniye cinsinden)
+        const modes = {
+            pomodoro: 25 * 60,
+            shortBreak: 5 * 60,
+            longBreak: 15 * 60
+        };
+
+        // Sayfa yüklendiğinde
+        document.addEventListener('DOMContentLoaded', () => {
+            // Apply the current theme
+            const currentTheme = themeManager.getCurrentTheme();
+            themeManager.applyTheme(currentTheme);
+
+            // Timer seçimi için değişkenler
+            const timerNavButtons = document.querySelectorAll('.timer-nav-button');
+            const timerSections = document.querySelectorAll('.timer-section');
+            const navButtons = document.querySelectorAll('.nav-menu-button');
+            const sections = document.querySelectorAll('.timer-section');
+            
+            // Pomodoro değişkenleri
+            const modeButtons = document.querySelectorAll('.mode-button');
+            const timerDisplay = document.querySelector('#pomodoro-section .timer-display');
+            const startBtn = document.getElementById('start');
+            const pauseBtn = document.getElementById('pause');
+            const resetBtn = document.getElementById('reset');
+            const completedCount = document.getElementById('completedCount');
+
+            function updateDisplay() {
+                const minutes = Math.floor(currentTime / 60);
+                const seconds = currentTime % 60;
+                timerDisplay.textContent = 
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+
+            function handleTimerComplete() {
+                clearInterval(timerId);
+                isRunning = false;
+                startBtn.style.display = 'block';
+                pauseBtn.style.display = 'none';
+                
+                completedPomodoros++;
+                completedCount.textContent = completedPomodoros;
+                currentTime = 25 * 60;
+                updateDisplay();
+            }
+
+            // Pomodoro mod seçimi
+            modeButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Butonları güncelle
+                    modeButtons.forEach(btn => btn.classList.remove('selected'));
+                    button.classList.add('selected');
+                    
+                    const mode = button.dataset.mode;
+                    currentTime = modes[mode];
+                    
+                    // Timer'ı sıfırla
+                    clearInterval(timerId);
+                    isRunning = false;
+                    startBtn.style.display = 'block';
+                    pauseBtn.style.display = 'none';
+                    updateDisplay();
+                });
+            });
+
+            // Timer kontrolleri
+            startBtn.addEventListener('click', () => {
+                if (!isRunning) {
+                    isRunning = true;
+                    startBtn.style.display = 'none';
+                    pauseBtn.style.display = 'block';
+                    timerId = setInterval(() => {
+                        currentTime--;
+                        updateDisplay();
+                        if (currentTime <= 0) {
+                            handleTimerComplete();
+                        }
+                    }, 1000);
+                }
+            });
+
+            pauseBtn.addEventListener('click', () => {
+                if (isRunning) {
+                    clearInterval(timerId);
+                    isRunning = false;
+                    startBtn.style.display = 'block';
+                    pauseBtn.style.display = 'none';
+                }
+            });
+
+            resetBtn.addEventListener('click', () => {
+                clearInterval(timerId);
+                isRunning = false;
+                startBtn.style.display = 'block';
+                pauseBtn.style.display = 'none';
+                
+                const selectedMode = document.querySelector('.mode-button.selected').dataset.mode;
+                currentTime = modes[selectedMode];
+                updateDisplay();
+            });
+
+            // Kronometre işlevselliği
+            const stopwatch = {
+                display: document.querySelector('#stopwatch-section .timer-display'),
+                startBtn: document.getElementById('stopwatchStartBtn'),
+                lapBtn: document.getElementById('stopwatchLapBtn'),
+                resetBtn: document.getElementById('stopwatchResetBtn'),
+                lapList: document.querySelector('.lap-times'),
+                startTime: 0,
+                elapsedTime: 0,
+                isRunning: false,
+                intervalId: null,
+
+                start() {
+                    if (!this.isRunning) {
+                        this.isRunning = true;
+                        this.startTime = Date.now() - this.elapsedTime;
+                        this.intervalId = setInterval(() => this.updateDisplay(), 10);
+                        this.startBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                        this.lapBtn.disabled = false;
+                    } else {
+                        this.stop();
+                    }
+                },
+
+                stop() {
+                    this.isRunning = false;
+                    clearInterval(this.intervalId);
+                    this.elapsedTime = Date.now() - this.startTime;
+                    this.startBtn.innerHTML = '<i class="fas fa-play"></i>';
+                },
+
+                reset() {
+                    this.stop();
+                    this.elapsedTime = 0;
+                    this.updateDisplay();
+                    this.lapList.innerHTML = '';
+                    this.lapBtn.disabled = true;
+                },
+
+                lap() {
+                    const currentTime = Date.now() - this.startTime;
+                    const minutes = Math.floor(currentTime / 60000);
+                    const hours = Math.floor(minutes / 60);
+                    const displayMinutes = minutes % 60;
+                    const seconds = Math.floor((currentTime % 60000) / 1000);
+                    const lapTimeText = `${hours.toString().padStart(2, '0')}.${displayMinutes.toString().padStart(2, '0')}.${seconds.toString().padStart(2, '0')}`;
+                    
+                    const lapElement = document.createElement('div');
+                    lapElement.className = 'lap-time';
+                    lapElement.textContent = `Tur ${this.lapList.children.length + 1}: ${lapTimeText}`;
+                    this.lapList.insertBefore(lapElement, this.lapList.firstChild);
+                },
+
+                updateDisplay() {
+                    const currentTime = this.isRunning ? Date.now() - this.startTime : this.elapsedTime;
+                    const formattedTime = this.formatTime(currentTime);
+                    this.display.innerHTML = formattedTime;
+                },
+
+                formatTime(ms) {
+                    const minutes = Math.floor(ms / 60000);
+                    const hours = Math.floor(minutes / 60);
+                    const displayMinutes = minutes % 60;
+                    const seconds = Math.floor((ms % 60000) / 1000);
+                    return `${hours.toString().padStart(2, '0')}.${displayMinutes.toString().padStart(2, '0')}.<span class="seconds">${seconds.toString().padStart(2, '0')}</span>`;
+                }
+            };
+
+            // Kronometre event listener'ları
+            stopwatch.startBtn.addEventListener('click', () => stopwatch.start());
+            stopwatch.lapBtn.addEventListener('click', () => stopwatch.lap());
+            stopwatch.resetBtn.addEventListener('click', () => stopwatch.reset());
+
+            // Nav butonları için event listeners
+            navButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    // Aktif butonu güncelle
+                    navButtons.forEach(btn => btn.classList.remove('selected'));
+                    button.classList.add('selected');
+
+                    // İlgili bölümü göster
+                    const targetTab = button.getAttribute('data-tab');
+                    // Son aktif sayfayı kaydet
+                    localStorage.setItem('lastActiveTab', targetTab);
+                    
+                    sections.forEach(section => {
+                        section.classList.remove('active');
+                        if (section.id === `${targetTab}-section`) {
+                            section.classList.add('active');
+                        }
+                    });
+
+                    // Circle animasyonu
+                    const rect = e.target.getBoundingClientRect();
+                    const x = rect.left + rect.width / 2;
+                    const y = rect.top + rect.height / 2;
+                    const size = Math.max(window.innerWidth, window.innerHeight) * 2;
+                    createExpandingCircle({ x, y, size });
+                });
+            });
+
+            // Sayfa yüklendiğinde son aktif sayfayı göster
+            const lastActiveTab = localStorage.getItem('lastActiveTab') || 'pomodoro';
+            const lastActiveButton = document.querySelector(`[data-tab="${lastActiveTab}"]`);
+            if (lastActiveButton) {
+                lastActiveButton.click();
+            }
+
+            // Alarm işlevselliği
+            const alarm = {
+                alarms: JSON.parse(localStorage.getItem('alarms')) || [],
+                nameInput: document.getElementById('alarmName'),
+                timeInput: document.getElementById('alarmTime'),
+                addButton: document.getElementById('addAlarmBtn'),
+                alarmList: document.querySelector('.alarm-list'),
+
+                addAlarm() {
+                    const name = this.nameInput.value;
+                    const time = this.timeInput.value;
+                    if (!time || !name) return;
+
+                    // Önce bildirim iznini kontrol et ve iste
+                    if ('Notification' in window && Notification.permission === 'default') {
+                        Notification.requestPermission().then(permission => {
+                            if (permission === 'granted') {
+                                this.saveNewAlarm(name, time);
+                            } else {
+                                // İzin verilmese bile alarmı kaydet
+                                this.saveNewAlarm(name, time);
+                            }
+                        });
+                    } else {
+                        // Zaten izin durumu belli ise direkt kaydet
+                        this.saveNewAlarm(name, time);
+                    }
+                },
+
+                saveNewAlarm(name, time) {
+                    const alarm = {
+                        time: time,
+                        name: name,
+                        id: Date.now()
+                    };
+
+                    this.alarms.push(alarm);
+                    this.saveAlarms();
+                    this.renderAlarm(alarm);
+                    this.nameInput.value = '';
+                    this.timeInput.value = '';
+                },
+
+                renderAlarm(alarm) {
+                    const formattedTime = new Date(`1970-01-01T${alarm.time}:00`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    const alarmElement = document.createElement('div');
+                    alarmElement.className = 'alarm-item';
+                    alarmElement.innerHTML = `
+                        <span>${alarm.name} - ${formattedTime}</span>
+                        <div class="alarm-controls">
+                            <button class="edit-btn" onclick="alarm.editAlarm(${alarm.id})">
+                                <i class="fas fa-pencil-alt"></i>
+                            </button>
+                            <button class="delete-btn" onclick="alarm.deleteAlarm(${alarm.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    this.alarmList.appendChild(alarmElement);
+                },
+
+                editAlarm(id) {
+                    const alarmToEdit = this.alarms.find(alarm => alarm.id === id);
+                    if (alarmToEdit) {
+                        this.nameInput.value = alarmToEdit.name;
+                        this.timeInput.value = alarmToEdit.time;
+                        this.deleteAlarm(id); // Remove the alarm to allow re-adding it after editing
+                    }
+                },
+
+                deleteAlarm(id) {
+                    this.alarms = this.alarms.filter(alarm => alarm.id !== id);
+                    this.saveAlarms();
+                    this.loadAlarms();
+                },
+
+                loadAlarms() {
+                    this.alarmList.innerHTML = '';
+                    this.alarms.forEach(alarm => this.renderAlarm(alarm));
+                },
+
+                saveAlarms() {
+                    localStorage.setItem('alarms', JSON.stringify(this.alarms));
+                },
+
+                async requestNotificationPermission() {
+                    if ('Notification' in window) {
+                        const permission = await Notification.requestPermission();
+                        return permission === 'granted';
+                    }
+                    return false;
+                },
+
+                async triggerAlarm(alarm) {
+                    // Ses çalma
+                    const audio = new Audio('../Res/Crystal_Drop.mp3');
+                    try {
+                        await audio.play();
+                    } catch (err) {
+                        console.log('Ses hatası:', err);
+                    }
+
+                    // Bildirim kontrolü ve gönderme
+                    if ('Notification' in window) {
+                        try {
+                            // Eğer izin henüz istenmemişse
+                            if (Notification.permission === 'default') {
+                                const permission = await Notification.requestPermission();
+                                if (permission === 'granted') {
+                                    this.showNotification(alarm);
+                                }
+                            } 
+                            // Eğer izin verilmişse
+                            else if (Notification.permission === 'granted') {
+                                this.showNotification(alarm);
+                            }
+                        } catch (error) {
+                            console.log('Bildirim hatası:', error);
+                        }
+                    }
+
+                    // Alarmı sil
+                    this.deleteAlarm(alarm.id);
+                },
+
+                showNotification(alarm) {
+                    new Notification('YKS Takip - Alarm', {
+                        body: `${alarm.name} alarmınızın vakti geldi!`,
+                        icon: '../Res/alarm-icon.png',
+                        badge: '../Res/alarm-icon.png',
+                        vibrate: [200, 100, 200],
+                        requireInteraction: true
+                    });
+                },
+
+                checkAlarms() {
+                    setInterval(() => {
+                        const now = new Date();
+                        const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+                        
+                        this.alarms.forEach(alarm => {
+                            if (alarm.time === currentTime) {
+                                this.triggerAlarm(alarm);
+                            }
+                        });
+                    }, 1000);
+                }
+            };
+
+            // Alarm event listener'ı
+            document.getElementById('addAlarmBtn').addEventListener('click', () => alarm.addAlarm());
+            
+            // Alarmları yükle
+            alarm.loadAlarms();
+            alarm.checkAlarms();
+
+            // Global alarm nesnesi
+            window.alarm = alarm;
+
+            // Check if the Pomodoro info should be hidden
+            const pomodoroInfo = document.getElementById('pomodoroInfo');
+            const hidePomodoroInfo = localStorage.getItem('hidePomodoroInfo');
+
+            if (hidePomodoroInfo === 'true') {
+                pomodoroInfo.style.display = 'none';
+            }
+
+            // Event listener for the close button
+            document.getElementById('closePomodoroInfo').addEventListener('click', () => {
+                const userConfirmed = confirm("Bu bilgi kutusunu bir daha gösterme onayı veriyor musunuz?");
+                if (userConfirmed) {
+                    pomodoroInfo.style.display = 'none';
+                    localStorage.setItem('hidePomodoroInfo', 'true');
+                }
+            });
+
+            // Tam ekran modu için
+            const fullscreenBtn = document.getElementById('fullscreenBtn');
+            const exitFullscreenBtn = document.getElementById('exitFullscreenBtn');
+            const darkModeBtn = document.getElementById('darkModeBtn');
+            const mainContent = document.querySelector('.main-content');
+            const header = document.querySelector('.header');
+            let isFullscreen = false;
+            let isDarkMode = false;
+
+            // Dark mode tercihini kaydet ve uygula
+            const savedDarkMode = localStorage.getItem('darkMode');
+            if (savedDarkMode === 'true') {
+                isDarkMode = true;
+                mainContent.classList.add('dark');
+                document.body.classList.add('dark-mode');
+                darkModeBtn.innerHTML = '<i class="fas fa-sun"></i>';
+            } else {
+                mainContent.classList.add('light');
+            }
+
+            // Dark mode butonuna tıklama olayı
+            function toggleDarkMode() {
+                isDarkMode = !isDarkMode;
+                if (isDarkMode) {
+                    mainContent.classList.remove('light');
+                    mainContent.classList.add('dark');
+                    document.body.classList.add('dark-mode');
+                    darkModeBtn.innerHTML = '<i class="fas fa-sun"></i>';
+                    localStorage.setItem('darkMode', 'true');
+                    
+                    if (isFullscreen) {
+                        document.body.style.backgroundColor = '#000000';
+                        mainContent.style.backgroundColor = '#000000';
+                    }
+                } else {
+                    mainContent.classList.remove('dark');
+                    mainContent.classList.add('light');
+                    document.body.classList.remove('dark-mode');
+                    document.body.style.backgroundColor = '';
+                    mainContent.style.backgroundColor = '';
+                    darkModeBtn.innerHTML = '<i class="fas fa-moon"></i>';
+                    localStorage.setItem('darkMode', 'false');
+                }
+            }
+
+            // Dark mode butonuna event listener ekleyin
+            darkModeBtn.addEventListener('click', toggleDarkMode);
+
+            // Tam ekran butonuna tıklama olayı
+            fullscreenBtn.addEventListener('click', enterFullscreen);
+            exitFullscreenBtn.addEventListener('click', exitFullscreen);
+
+            // ESC tuşu ve fullscreen değişikliği için event listener
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && isFullscreen) {
+                    exitFullscreen();
+                }
+            });
+
+            document.addEventListener('fullscreenchange', () => {
+                if (!document.fullscreenElement && isFullscreen) {
+                    exitFullscreen();
+                }
+            });
+
+            // Tam ekran moduna girerken
+            async function enterFullscreen() {
+                try {
+                    isFullscreen = true;
+                    document.body.classList.add('fullscreen');
+                    mainContent.classList.add('fullscreen-mode');
+                    mainContent.classList.add(isDarkMode ? 'dark' : 'light');
+                    
+                    if (isDarkMode) {
+                        document.body.style.backgroundColor = '#000000';
+                        mainContent.style.backgroundColor = '#000000';
+                        document.body.classList.add('dark-mode');
+                    }
+                    
+                    header.style.display = 'none';
+                    exitFullscreenBtn.style.display = 'flex';
+
+                    if (document.documentElement.requestFullscreen) {
+                        await document.documentElement.requestFullscreen();
+                    } else if (document.documentElement.webkitRequestFullscreen) {
+                        await document.documentElement.webkitRequestFullscreen();
+                    } else if (document.documentElement.msRequestFullscreen) {
+                        await document.documentElement.msRequestFullscreen();
+                    }
+                } catch (err) {
+                    console.log('Tam ekran hatası:', err);
+                }
+            }
+
+            // Tam ekrandan çıkarken
+            async function exitFullscreen() {
+                try {
+                    if (document.exitFullscreen) {
+                        await document.exitFullscreen();
+                    } else if (document.webkitExitFullscreen) {
+                        await document.webkitExitFullscreen();
+                    } else if (document.msExitFullscreen) {
+                        await document.msExitFullscreen();
+                    }
+                    
+                    isFullscreen = false;
+                    document.body.classList.remove('fullscreen');
+                    mainContent.classList.remove('fullscreen-mode', 'dark', 'light');
+                    header.style.display = 'flex';
+                    exitFullscreenBtn.style.display = 'none';
+
+                    // Dark mode durumunu koru
+                    if (isDarkMode) {
+                        mainContent.classList.add('dark');
+                        document.body.classList.add('dark-mode');
+                    } else {
+                        mainContent.classList.add('light');
+                        document.body.classList.remove('dark-mode');
+                    }
+
+                    document.body.style.backgroundColor = '';
+                    mainContent.style.backgroundColor = '';
+                } catch (err) {
+                    console.log('Tam ekrandan çıkış hatası:', err);
+                }
+            }
+        });
+
+        function createExpandingCircle({ x, y, size }) {
+            const circle = document.createElement('div');
+            circle.className = 'expanding-circle';
+            document.body.appendChild(circle);
+
+            circle.style.left = x + 'px';
+            circle.style.top = y + 'px';
+
+            // Force reflow
+            circle.offsetWidth;
+
+            circle.style.width = size + 'px';
+            circle.style.height = size + 'px';
+
+            setTimeout(() => {
+                circle.remove();
+            }, 500);
+        }
+    </script>
+</body>
+</html>

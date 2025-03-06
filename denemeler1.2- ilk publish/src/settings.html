@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YKS Takip - Ayarlar</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0d0b14;    /* Kozmik Mor */
+            --secondary: #2D1B36;  /* Panel arka planı */
+            --accent: #9B6B9E;     /* Vurgu rengi */
+            --light: #E5B8F4;      /* Açık metin rengi */
+            --border: #4A3B4E;     /* Kenarlık rengi */
+            --background: var(--primary); /* Arka plan rengi için değişken */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: url('../Res/purplestar.jpeg') no-repeat center center fixed;
+            background-size: cover;
+            color: var(--light);
+            min-height: 100vh;
+            padding: 1rem;
+            overflow-y: auto;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            z-index: -1;
+        }
+
+        .settings-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.5rem;
+            background: rgba(13, 11, 20, 0.8);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            overflow-y: auto;
+            max-height: 90vh;
+        }
+
+        .settings-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 3rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .back-button {
+            background: none;
+            border: none;
+            color: var(--light);
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin-right: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            color: var(--accent);
+            transform: translateX(-5px);
+        }
+
+        .settings-title {
+            font-size: 2rem;
+            color: var(--light);
+        }
+
+        .theme-section {
+            margin-bottom: 3rem;
+        }
+
+        .theme-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+            align-items: start;
+        }
+
+        .theme-card {
+            background: rgba(45, 27, 54, 0.5);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            border: 2px solid transparent;
+            height: 220px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .theme-card.selected::before {
+            content: "✓";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4rem;
+            color: var(--light);
+            z-index: 2;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .theme-card.selected .theme-preview {
+            position: relative;
+        }
+
+        .theme-card.selected .theme-preview::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+
+        .theme-card.selected {
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(155, 107, 158, 0.3);
+        }
+
+        .theme-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+        }
+
+        .theme-preview {
+            height: 120px;
+            width: 100%;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .theme-info {
+            padding: 1rem;
+            text-align: center;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .theme-name {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--light);
+        }
+
+        .theme-description {
+            font-size: 0.9rem;
+            color: rgba(229, 184, 244, 0.7);
+        }
+
+        .theme-actions {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .theme-card:hover .theme-actions {
+            opacity: 1;
+        }
+
+        .theme-button {
+            background: rgba(13, 11, 20, 0.8);
+            border: none;
+            color: var(--light);
+            padding: 0.5rem;
+            border-radius: 50%;
+            cursor: pointer;
+            margin-left: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .theme-button:hover {
+            background: var(--accent);
+            transform: scale(1.1);
+        }
+
+        .add-theme-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(45, 27, 54, 0.3);
+            border: 2px dashed var(--accent);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            height: 220px;
+        }
+
+        .add-theme-card:hover {
+            background: rgba(45, 27, 54, 0.5);
+            transform: translateY(-5px);
+        }
+
+        .add-theme-icon {
+            font-size: 3rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .add-theme-text {
+            color: var(--light);
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 0.5rem;
+            }
+
+            .settings-container {
+                padding: 1rem;
+                margin: 0;
+                border-radius: 15px;
+            }
+
+            .theme-grid {
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+                gap: 1rem;
+            }
+
+            .theme-card, .add-theme-card {
+                height: 180px;
+            }
+
+            .theme-preview {
+                height: 90px;
+            }
+
+            .theme-info {
+                padding: 0.8rem;
+            }
+
+            .theme-name {
+                font-size: 1rem;
+            }
+
+            .theme-description {
+                font-size: 0.8rem;
+            }
+
+            .settings-title {
+                font-size: 1.3rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .theme-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                gap: 0.8rem;
+            }
+
+            .theme-card, .add-theme-card {
+                height: 160px;
+            }
+
+            .theme-preview {
+                height: 80px;
+            }
+        }
+
+        .settings-section {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: rgba(45, 27, 54, 0.5);
+            border-radius: 15px;
+        }
+
+        .settings-subtitle {
+            color: var(--light);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .settings-option {
+            margin: 1rem 0;
+        }
+
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .toggle-container span {
+            color: var(--light);
+            font-size: 1rem;
+        }
+
+        .toggle-container input {
+            display: none;
+        }
+
+        .toggle-slider {
+            position: relative;
+            width: 50px;
+            height: 24px;
+            background-color: var(--secondary);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-slider:before {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            left: 2px;
+            bottom: 2px;
+            background-color: var(--light);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--accent);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        @media (max-width: 768px) {
+            .settings-subtitle {
+                font-size: 1.2rem;
+            }
+
+            .toggle-container span {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+    <script src="themes.js"></script>
+</head>
+<body>
+    <!-- Ana İçerik -->
+    <div class="settings-container">
+        <div class="settings-header">
+            <button class="back-button" onclick="window.location.href='home.html'">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <h1 class="settings-title">Ayarlar</h1>
+        </div>
+
+        <div class="theme-section">
+            <div class="theme-grid">
+                <div class="theme-card" data-theme="exam-tracker" onclick="selectTheme('exam-tracker')">
+                    <div class="theme-preview" style="background: linear-gradient(45deg, #200107, #6D3C52)"></div>
+                    <div class="theme-info">
+                        <h3 class="theme-name">Varsayılan Tema</h3>
+                        <p class="theme-description">YKS Takip sisteminin orijinal teması</p>
+                    </div>
+                </div>
+
+                <div class="theme-card" data-theme="cosmic-purple" onclick="selectTheme('cosmic-purple')">
+                    <div class="theme-preview" style="background: linear-gradient(45deg, #1a1423, #2D1B36)"></div>
+                    <div class="theme-info">
+                        <h3 class="theme-name">Kozmik Mor</h3>
+                        <p class="theme-description">Derin uzayın gizemli tonları</p>
+                    </div>
+                </div>
+
+                <div class="theme-card" data-theme="night-mode" onclick="selectTheme('night-mode')">
+                    <div class="theme-preview" style="background: linear-gradient(45deg, #232526, #414345)"></div>
+                    <div class="theme-info">
+                        <h3 class="theme-name">Gece Modu</h3>
+                        <p class="theme-description">Göz yormayan karanlık tema</p>
+                    </div>
+                </div>
+
+                <div class="theme-card" data-theme="starlight" onclick="selectTheme('starlight')">
+                    <div class="theme-preview" style="background: linear-gradient(45deg, #1E1E2E, #A387CC)"></div>
+                    <div class="theme-info">
+                        <h3 class="theme-name">Yıldız Işığı</h3>
+                        <p class="theme-description">Parlak ve ferah bir deneyim</p>
+                    </div>
+                </div>
+
+                <div class="theme-card" data-theme="nebula" onclick="selectTheme('nebula')">
+                    <div class="theme-preview" style="background: linear-gradient(45deg, #2D1B36, #B86AF9)"></div>
+                    <div class="theme-info">
+                        <h3 class="theme-name">Nebula</h3>
+                        <p class="theme-description">Galaksinin renkli bulutları</p>
+                    </div>
+                </div>
+
+                <div class="theme-card" data-theme="gece-yildizlari" onclick="selectTheme('gece-yildizlari')">
+                    <div class="theme-preview" style="background: linear-gradient(45deg, #0f111a, #1a237e)"></div>
+                    <div class="theme-info">
+                        <h3 class="theme-name">Gece Yıldızları</h3>
+                        <p class="theme-description">Yıldızlı gecenin derinliği</p>
+                    </div>
+                </div>
+
+                <div class="theme-card" data-theme="lavanta" onclick="selectTheme('lavanta')">
+                    <div class="theme-preview" style="background: linear-gradient(45deg, #4a1b5c, #7b2cbf)"></div>
+                    <div class="theme-info">
+                        <h3 class="theme-name">Lavanta</h3>
+                        <p class="theme-description">Huzur veren mor tonları</p>
+                    </div>
+                </div>
+
+                <div class="theme-card" data-theme="turkuaz" onclick="selectTheme('turkuaz')">
+                    <div class="theme-preview" style="background: linear-gradient(45deg, #164e63, #0891b2)"></div>
+                    <div class="theme-info">
+                        <h3 class="theme-name">Turkuaz</h3>
+                        <p class="theme-description">Denizin ferahlatan mavisi</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Yeni Ayarlar Bölümü -->
+
+
+    <script>
+    // LocalStorage'dan temaları yükle veya varsayılan temaları kullan
+    let customThemes = JSON.parse(localStorage.getItem('customThemes')) || {
+        'cosmic-purple': {
+            primary: '#1a1423',
+            secondary: '#2D1B36',
+            accent: '#9B6B9E',
+            light: '#E5B8F4',
+            border: '#4A3B4E',
+            background: '#0d0b14',
+            gradient: 'linear-gradient(to right, #1a1423, #2D1B36)'
+        },
+        'exam-tracker': {
+            primary: '#200107',
+            secondary: '#6D3C52',
+            accent: '#4B2138',
+            light: '#FADCD5',
+            border: '#2D222F',
+            background: '#200107',
+            gradient: 'linear-gradient(to right, #200107, #6D3C52)'
+        }
+    };
+
+    // themes.js'deki temaları customThemes ile birleştir
+    Object.assign(themes, customThemes);
+
+    // Tema seçimi için event listener
+    function selectTheme(themeName) {
+        // Önce tüm kartlardan selected sınıfını kaldır
+        document.querySelectorAll('.theme-card').forEach(card => {
+            card.classList.remove('selected');
+        });
+        
+        // Seçilen temayı işaretle
+        const selectedCard = document.querySelector(`[data-theme="${themeName}"]`);
+        if (selectedCard) {
+            selectedCard.classList.add('selected');
+        }
+        
+        // Temayı uygula
+        themeManager.changeTheme(themeName);
+    }
+
+    // Sayfa yüklendiğinde
+    document.addEventListener('DOMContentLoaded', () => {
+        // Mevcut temayı uygula ve seçili göster
+        const currentTheme = localStorage.getItem('selectedTheme') || 'cosmic-purple';
+        selectTheme(currentTheme);
+    });
+
+    function toggleSubjectCombination() {
+        const isChecked = document.getElementById('combineSubjects').checked;
+        localStorage.setItem('combineSubjects', isChecked);
+    }
+
+    // Sayfa yüklendiğinde önceki tercihi yükle
+    document.addEventListener('DOMContentLoaded', () => {
+        const savedPreference = localStorage.getItem('combineSubjects');
+        if (savedPreference !== null) {
+            document.getElementById('combineSubjects').checked = savedPreference === 'true';
+        }
+    });
+    </script>
+</body>
+</html>
